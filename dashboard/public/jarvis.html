@@ -264,11 +264,13 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-track{background:transparent}
 body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:2px}
 
 /* HAZARD MAP */
-.wx-bottom{display:flex;gap:var(--s5);align-items:stretch}
-.wx-hl{flex:1;min-width:0}
-.wx-map{flex:1;min-width:0;display:flex;flex-direction:column}
-.wx-map .map-key{margin-top:var(--s2)}
-#hazMap{flex:1;min-height:320px;height:100%;border-radius:var(--r);overflow:hidden;border:1px solid var(--divider);background:var(--surface-2)}
+.wx-bottom{display:grid;grid-template-columns:1fr 1fr;column-gap:var(--s5);row-gap:var(--s3)}
+.wx-bottom>*{min-width:0}
+.t-hl{grid-column:1;grid-row:1}
+.t-map{grid-column:2;grid-row:1}
+.wx-bottom .wx-grid{grid-column:1;grid-row:2;grid-template-rows:repeat(2,1fr)}
+#hazMap{grid-column:2;grid-row:2;min-height:320px;border-radius:var(--r);overflow:hidden;border:1px solid var(--divider);background:var(--surface-2)}
+.wx-bottom .map-key{grid-column:2;grid-row:3;margin-top:0}
 #hazMap .leaflet-container{font-family:var(--font-sans)}
 .leaflet-popup-content{font-family:var(--font-sans);font-size:var(--fs-sm);line-height:1.5}
 .leaflet-tooltip.town-tip{background:var(--surface);color:var(--text-strong);border:1px solid var(--border-strong);border-radius:var(--r-sm);box-shadow:var(--shadow-xs);font-family:var(--font-sans);font-size:var(--fs-xs);font-weight:600;padding:2px 7px}
@@ -277,7 +279,15 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
 .map-key{display:flex;gap:14px;flex-wrap:wrap;margin-top:var(--s3);font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:0.04em;text-transform:uppercase}
 .map-key .k{display:flex;align-items:center;gap:5px}
 .map-key .kd{width:9px;height:9px;border-radius:50%}
-@media(max-width:900px){.wx-bottom{flex-direction:column}#hazMap{flex:none;height:300px;min-height:0}}
+@media(max-width:900px){
+  .wx-bottom{grid-template-columns:1fr}
+  .wx-bottom>*{grid-column:1}
+  .t-hl{grid-row:1}
+  .wx-bottom .wx-grid{grid-row:2;grid-template-rows:auto}
+  .t-map{grid-row:3}
+  #hazMap{grid-row:4;height:300px;min-height:0}
+  .wx-bottom .map-key{grid-row:5}
+}
 
 /* SECTION TOGGLE */
 .section-toggle{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin-top:var(--s3);height:32px;border:1px solid var(--border);border-radius:var(--r);background:var(--surface);color:var(--muted);font-family:var(--font-sans);font-size:var(--fs-xs);font-weight:500;cursor:pointer;transition:background var(--dur-1) var(--ease),color var(--dur-1) var(--ease),border-color var(--dur-1) var(--ease)}
@@ -751,20 +761,16 @@ function renderWeather(){
       <div class="wx-towns">${townBtns}</div>
       <div class="wx-week">${week}</div>
       <div class="wx-bottom">
-        <div class="wx-hl">
-          <div class="wx-hl-title">Today's Highlights</div>
-          <div class="wx-grid">
+        <div class="wx-hl-title t-hl">Today's Highlights</div>
+        <div class="wx-hl-title t-map">Hazard Map</div>
+        <div class="wx-grid">
             <div class="wx-tile"><div class="l">Wind</div><div class="v">${c.windKmh!=null?c.windKmh.toFixed(1):'\u2014'} <small>km/h</small></div><div class="s">${compass(c.windDir)}</div></div>
             <div class="wx-tile"><div class="l">Sunrise &amp; Sunset</div><div class="v" style="font-size:19px">\u2191 ${sunT(tn.today?.sunrise)}<br>\u2193 ${sunT(tn.today?.sunset)}</div></div>
             <div class="wx-tile"><div class="l">Humidity</div><div class="v">${c.humidity!=null?c.humidity:'\u2014'}<small>%</small></div><div class="s">${c.humidity>=70?'Humid':c.humidity>=30?'Normal':'Dry'}</div></div>
             <div class="wx-tile"><div class="l">Visibility</div><div class="v">${c.visibilityKm!=null?c.visibilityKm:'\u2014'} <small>km</small></div><div class="s">${c.visibilityKm>=20?'Clear':c.visibilityKm>=8?'Average':'Poor'}</div></div>
-          </div>
         </div>
-        <div class="wx-map">
-          <div class="wx-hl-title">Hazard Map</div>
-          <div id="hazMap"></div>
-          <div class="map-key" id="mapKey"></div>
-        </div>
+        <div id="hazMap"></div>
+        <div class="map-key" id="mapKey"></div>
       </div>
     </div>
   </div>`;
