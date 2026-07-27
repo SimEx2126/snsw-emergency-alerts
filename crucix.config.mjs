@@ -33,6 +33,16 @@ export default {
     channels: process.env.TELEGRAM_CHANNELS || null, // Comma-separated extra channel IDs
   },
 
+  email: {
+    host: process.env.SMTP_HOST || null,
+    port: parseInt(process.env.SMTP_PORT) || 587,
+    secure: process.env.SMTP_SECURE === 'true', // true = implicit TLS (port 465)
+    user: process.env.SMTP_USER || null,
+    pass: process.env.SMTP_PASS || null,
+    from: process.env.ALERT_EMAIL_FROM || null,
+    to: process.env.ALERT_EMAIL_TO || null, // comma-separated list
+  },
+
   discord: {
     botToken: process.env.DISCORD_BOT_TOKEN || null,
     channelId: process.env.DISCORD_CHANNEL_ID || null,

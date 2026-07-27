@@ -16,6 +16,7 @@ import { createLLMProvider } from './lib/llm/index.mjs';
 import { generateLLMIdeas } from './lib/llm/ideas.mjs';
 import { TelegramAlerter } from './lib/alerts/telegram.mjs';
 import { DiscordAlerter } from './lib/alerts/discord.mjs';
+import { EmailAlerter } from './lib/alerts/email.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = __dirname;
@@ -42,8 +43,13 @@ const memory = new MemoryManager(RUNS_DIR, { thresholds: config.delta?.threshold
 const llmProvider = createLLMProvider(config.llm);
 const telegramAlerter = new TelegramAlerter(config.telegram);
 const discordAlerter = new DiscordAlerter(config.discord || {});
+const emailAlerter = new EmailAlerter({
+  ...(config.email || {}),
+  dashboardUrl: config.publicUrl || `http://localhost:${config.port}`,
+});
 
 if (llmProvider) console.log(`[Crucix] LLM enabled: ${llmProvider.name} (${llmProvider.model})`);
+if (emailAlerter.isConfigured) console.log(`[Crucix] Email alerts enabled (${emailAlerter.to.length} recipient(s))`);
 if (telegramAlerter.isConfigured) {
   console.log('[Crucix] Telegram alerts enabled');
 
@@ -275,9 +281,22 @@ app.get('/api/health', (req, res) => {
     llmEnabled: !!config.llm.provider,
     llmProvider: config.llm.provider,
     telegramEnabled: !!(config.telegram.botToken && config.telegram.chatId),
+    emailEnabled: emailAlerter.isConfigured,
+    region: config.region?.label,
     refreshIntervalMinutes: config.refreshIntervalMinutes,
     language: currentLanguage,
   });
+});
+
+// API: manual sweep trigger (localhost only — used for drills and testing)
+app.post('/api/sweep', (req, res) => {
+  const ip = req.socket.remoteAddress || '';
+  if (!['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(ip)) {
+    return res.status(403).json({ error: 'Local requests only' });
+  }
+  if (sweepInProgress) return res.status(409).json({ error: 'Sweep already in progress' });
+  runSweepCycle().catch(err => console.error('[Crucix] Manual sweep failed:', err.message));
+  res.json({ ok: true, message: 'Sweep started' });
 });
 
 // API: available locales
@@ -362,8 +381,13 @@ async function runSweepCycle() {
       synthesized.ideasSource = 'disabled';
     }
 
-    // 6. Alert evaluation — Telegram + Discord (LLM with rule-based fallback, multi-tier, semantic dedup)
+    // 6. Alert evaluation — Email + Telegram + Discord (rule-based hazard tiering, multi-tier, dedup)
     if (delta?.summary?.totalChanges > 0) {
+      if (emailAlerter.isConfigured) {
+        emailAlerter.evaluateAndAlert(llmProvider, delta, memory).catch(err => {
+          console.error('[Crucix] Email alert error:', err.message);
+        });
+      }
       if (telegramAlerter.isConfigured) {
         telegramAlerter.evaluateAndAlert(llmProvider, delta, memory).catch(err => {
           console.error('[Crucix] Telegram alert error:', err.message);

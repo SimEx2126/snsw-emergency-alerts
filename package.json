@@ -1,7 +1,7 @@
 {
-  "name": "crucix",
-  "version": "2.0.0",
-  "description": "Local intelligence engine - 27 OSINT sources, live dashboard, public demo at crucix.live, auto-refresh, optional LLM layer.",
+  "name": "snsw-emergency-alerts",
+  "version": "1.0.0",
+  "description": "South NSW Conference emergency alert system — monitors bushfires, floods, storms and earthquakes across southern NSW + ACT with tiered email alerts. Adapted from Crucix (github.com/calesthio/Crucix).",
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
@@ -10,27 +10,32 @@
     "inject": "node dashboard/inject.mjs",
     "brief": "node apis/briefing.mjs",
     "brief:save": "node apis/save-briefing.mjs",
+    "test:alert": "node scripts/test-alert.mjs",
     "diag": "node diag.mjs",
     "clean": "node scripts/clean.mjs",
     "fresh-start": "npm run clean && npm start"
   },
   "keywords": [
-    "osint",
-    "intelligence",
-    "dashboard",
-    "geopolitical"
+    "emergency-alerts",
+    "bushfire",
+    "flood",
+    "nsw",
+    "dashboard"
   ],
-  "author": "Crucix",
+  "author": "South NSW Conference (adapted from Crucix by calesthio)",
   "license": "AGPL-3.0-only",
   "engines": {
     "node": ">=22",
     "npm": ">=10"
   },
   "dependencies": {
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "nodemailer": "^9.0.3"
   },
   "optionalDependencies": {
-    "discord.js": "^14.25.1"  },
+    "discord.js": "^14.25.1"
+  },
   "overrides": {
-    "undici": "^7.24.4"  }
+    "undici": "^7.24.4"
+  }
 }
