@@ -109,9 +109,6 @@ a{color:var(--accent-text)}
 .brand{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-sans);font-weight:600;font-size:var(--fs-md);letter-spacing:var(--track-tight);color:var(--text-strong)}
 .brand img{width:30px;height:30px;object-fit:contain}
 .brand .brand-suffix{color:var(--muted);font-weight:400}
-.regime-chip{display:inline-flex;align-items:center;gap:6px;padding:3px 12px;font-size:var(--fs-xs);font-weight:600;border-radius:var(--r-full);color:var(--accent-text);background:var(--accent-tint)}
-.regime-chip .blink{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse-blink 2s ease-in-out infinite}
-@keyframes pulse-blink{0%,100%{opacity:1}50%{opacity:0.35}}
 .top-center{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .top-status{display:flex;align-items:center;gap:10px}
 .alert-badge{display:inline-flex;align-items:center;padding:3px 12px;font-size:var(--fs-sm);font-weight:600;border-radius:var(--r-full);background:var(--err-tint);color:var(--err-text)}
@@ -334,7 +331,6 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
   .bottom-row{grid-template-columns:1fr}
   .brand{font-size:var(--fs-sm)}
   .brand .brand-suffix{display:none}
-  .regime-chip{display:none}
   .town-btn{height:34px;font-size:var(--fs-sm);padding:0 var(--s4)}
   .wx-towns{gap:6px}
   .wx-week{grid-template-columns:repeat(4,1fr);gap:6px}
@@ -571,7 +567,6 @@ function renderTopbar(){
   document.getElementById('topbar').innerHTML=`
     <div class="top-left">
       <span class="brand"><img src="/adventist-logo.png" alt="">South NSW Conference <span class="brand-suffix">· Emergency Monitor</span></span>
-      <span class="regime-chip"><span class="blink"></span>BUSHFIRE / FLOOD / STORM WATCH</span>
     </div>
     <div class="top-status">
       ${(()=>{const e=(D.rfs?.emergency||[]).length,w=(D.rfs?.watchAct||[]).length,f=D.bom?.summary?.flood||0,s=D.bom?.summary?.storm||0;
