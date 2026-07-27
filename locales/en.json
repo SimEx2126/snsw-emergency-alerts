@@ -5,9 +5,9 @@
     "nativeName": "English"
   },
   "dashboard": {
-    "title": "CRUCIX — Intelligence Terminal",
-    "bootTitle": "CRUCIX INTELLIGENCE ENGINE",
-    "bootSubtitle": "Local Palantir · 31 Sources",
+    "title": "SNSW Emergency Monitor",
+    "bootTitle": "SNSW EMERGENCY MONITOR",
+    "bootSubtitle": "Southern NSW & ACT · Hazard Watch",
     "waitingForSweep": "Waiting for first sweep...",
     "sourcesOk": "Sources OK",
     "lastSweep": "Last sweep",
@@ -15,9 +15,9 @@
     "sweep": "SWEEP",
     "sources": "SOURCES",
     "delta": "DELTA",
-    "highAlert": "HIGH ALERT",
-    "riskOff": "RISK-OFF",
-    "riskOn": "RISK-ON",
+    "highAlert": "ALERT",
+    "riskOff": "ESCALATING",
+    "riskOn": "EASING",
     "mixed": "MIXED",
     "terminalActive": "TERMINAL ACTIVE",
     "perf": "PERF",
@@ -26,8 +26,8 @@
     "guideBtn": "What Signals Mean"
   },
   "boot": {
-    "initializing": "INITIALIZING CRUCIX ENGINE v2.1.0",
-    "connecting": "CONNECTING {count} OSINT SOURCES...",
+    "initializing": "INITIALIZING SNSW EMERGENCY MONITOR",
+    "connecting": "CONNECTING {count} HAZARD SOURCES...",
     "sourceGroup1": "OPENSKY · FIRMS · KIWISDR · MARITIME",
     "sourceGroup2": "FRED · BLS · EIA · TREASURY · GSCPI",
     "sourceGroup3": "TELEGRAM · SAFECAST · EPA · WHO · OFAC",
