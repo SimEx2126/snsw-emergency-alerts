@@ -285,8 +285,8 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
   .t-hl{grid-row:1}
   .wx-bottom .wx-grid{grid-row:2;grid-template-rows:auto}
   .t-map{grid-row:3}
-  #hazMap{grid-row:4;height:300px;min-height:0}
-  .wx-bottom .map-key{grid-row:5}
+  #hazMap{grid-column:1;grid-row:4;height:300px;min-height:0}
+  .wx-bottom .map-key{grid-column:1;grid-row:5}
 }
 
 /* SECTION TOGGLE */
@@ -361,6 +361,16 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
 }
 
 @media(max-width:640px){
+  /* Full-bleed on phones: drop the card chrome so content isn't boxed in */
+  #main{padding:0}
+  .topbar,.wx,.g-panel,.section-toggle{border-left:none;border-right:none;border-radius:0;box-shadow:none}
+  .topbar{margin-bottom:var(--s3)}
+  .grid{margin-top:0}
+  .wx-main{padding:var(--s4) var(--s3)}
+  .wx-side{padding:var(--s5) var(--s3)}
+  .wx-towns-top{padding:var(--s3)}
+  .section-toggle{margin:var(--s3) 0}
+  .lower,.bottom-row{gap:var(--s3)}
   .bottom-row{grid-template-columns:1fr}
   .brand{font-size:var(--fs-sm)}
   .brand .brand-suffix{display:none}
