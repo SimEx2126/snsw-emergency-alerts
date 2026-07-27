@@ -277,6 +277,11 @@ body.low-perf .ticker-wrap::-webkit-scrollbar{width:4px}
 body.low-perf .ticker-wrap::-webkit-scrollbar-track{background:transparent}
 body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:2px}
 
+/* SECTION TOGGLE */
+.section-toggle{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin-top:var(--s3);height:32px;border:1px solid var(--border);border-radius:var(--r);background:var(--surface);color:var(--muted);font-family:var(--font-sans);font-size:var(--fs-xs);font-weight:500;cursor:pointer;transition:background var(--dur-1) var(--ease),color var(--dur-1) var(--ease),border-color var(--dur-1) var(--ease)}
+.section-toggle:hover{background:var(--surface-2);color:var(--text);border-color:var(--border-strong)}
+.section-toggle .chev{font-size:10px}
+
 /* WEATHER CENTRE */
 .wx{border:1px solid var(--border);border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--shadow-xs);display:flex;overflow:hidden}
 .wx-side{flex:0 0 300px;padding:var(--s6);border-right:1px solid var(--divider);display:flex;flex-direction:column}
@@ -349,6 +354,7 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
   <div class="grid">
     <div class="col" id="centerCol">
       <div id="weatherCenter"></div>
+      <button class="section-toggle" id="lowerToggle" onclick="toggleLower()">Hide news &amp; resources <span class="chev">&#9662;</span></button>
       <div class="lower" id="lowerGrid"></div>
     </div>
   </div>
@@ -748,6 +754,20 @@ function renderWeather(){
   </div>`;
 }
 
+// === LOWER SECTION TOGGLE ===
+const LOWER_KEY = 'snsw-lower-hidden';
+function applyLowerVisibility(){
+  const hidden = (()=>{ try { return localStorage.getItem(LOWER_KEY)==='1'; } catch(e){ return false; } })();
+  const grid = document.getElementById('lowerGrid');
+  const btn = document.getElementById('lowerToggle');
+  if(grid) grid.style.display = hidden ? 'none' : '';
+  if(btn) btn.innerHTML = (hidden ? 'Show' : 'Hide') + ' news &amp; resources <span class="chev">' + (hidden ? '&#9656;' : '&#9662;') + '</span>';
+}
+function toggleLower(){
+  try { localStorage.setItem(LOWER_KEY, localStorage.getItem(LOWER_KEY)==='1' ? '0' : '1'); } catch(e){}
+  applyLowerVisibility();
+}
+
 // === LOWER GRID ===
 function renderLower(){
   const mobile = isMobileLayout();
@@ -1056,6 +1076,7 @@ let booted = false;
 function init(){
   renderTopbar();renderLeftRail();renderWeather();renderLower();renderRight();
   renderGlossary();
+  applyLowerVisibility();
   bindMapLifecycleEvents();
   if (!booted) { runBoot(); booted = true; }
   // Open article links from ticker cards
