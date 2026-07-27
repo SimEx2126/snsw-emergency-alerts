@@ -722,7 +722,6 @@ function renderWeather(){
   const timeStr = c.time ? c.time.slice(11,16) : '';
   const fmtT = v => v==null?'\u2014':Math.round(v);
   const sunT = v => v ? v.slice(11,16) : '\u2014';
-  const [aqiV, aqiS] = aqiLabel(c.aqi);
 
   const townBtns = towns.map((t2,i)=>
     `<button class="town-btn ${i===wxTownIdx?'active':''}" onclick="setWxTown(${i})">${t2.name}</button>`).join('');
@@ -750,13 +749,10 @@ function renderWeather(){
       <div class="wx-week">${week}</div>
       <div class="wx-hl-title">Today's Highlights</div>
       <div class="wx-grid">
-        <div class="wx-tile"><div class="l">UV Index (max)</div><div class="v">${tn.today?.uvMax!=null?tn.today.uvMax.toFixed(1):'\u2014'}</div><div class="s">${tn.today?.uvMax>=8?'Very high':tn.today?.uvMax>=6?'High':tn.today?.uvMax>=3?'Moderate':'Low'}</div></div>
         <div class="wx-tile"><div class="l">Wind</div><div class="v">${c.windKmh!=null?c.windKmh.toFixed(1):'\u2014'} <small>km/h</small></div><div class="s">${compass(c.windDir)}</div></div>
         <div class="wx-tile"><div class="l">Sunrise &amp; Sunset</div><div class="v" style="font-size:19px">\u2191 ${sunT(tn.today?.sunrise)}<br>\u2193 ${sunT(tn.today?.sunset)}</div></div>
         <div class="wx-tile"><div class="l">Humidity</div><div class="v">${c.humidity!=null?c.humidity:'\u2014'}<small>%</small></div><div class="s">${c.humidity>=70?'Humid':c.humidity>=30?'Normal':'Dry'}</div></div>
         <div class="wx-tile"><div class="l">Visibility</div><div class="v">${c.visibilityKm!=null?c.visibilityKm:'\u2014'} <small>km</small></div><div class="s">${c.visibilityKm>=20?'Clear':c.visibilityKm>=8?'Average':'Poor'}</div></div>
-        <div class="wx-tile"><div class="l">Air Quality (US AQI)</div><div class="v">${aqiV}</div><div class="s">${aqiS}</div></div>
-        <div class="wx-tile"><div class="l">Feels Like</div><div class="v">${fmtT(c.feelsLike)}<small>\u00B0C</small></div></div>
       </div>
     </div>
   </div>`;
