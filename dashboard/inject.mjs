@@ -486,6 +486,9 @@ export async function synthesize(data) {
     signals: bomData.signals || [],
   };
 
+  const weatherData = data.sources.Weather || {};
+  const weather = { towns: weatherData.towns || [] };
+
   const quakesData = data.sources.Quakes || {};
   const quakes = {
     total: quakesData.total || 0,
@@ -641,7 +644,7 @@ export async function synthesize(data) {
     },
     sdr: { total: sdrNet.totalReceivers || 0, online: sdrNet.online || 0, zones: sdrZones },
     tg: { posts: tgData.totalPosts || 0, urgent: tgUrgent, topPosts: tgTop },
-    rfs, bom, quakes,
+    rfs, bom, quakes, weather,
     who, fred, energy, metals, bls, treasury, gscpi, defense, noaa, epa, acled, gdelt, space, health, news,
     markets, // Live Yahoo Finance market data
     ideas: [], ideasSource: 'disabled',

@@ -14,6 +14,7 @@ import { briefing as bom } from './sources/bom.mjs';
 import { briefing as gaQuakes } from './sources/ga-quakes.mjs';
 import { briefing as firms } from './sources/firms.mjs';
 import { briefing as gdelt } from './sources/gdelt.mjs';
+import { briefing as weather } from './sources/weather.mjs';
 
 const SOURCE_TIMEOUT_MS = 30_000; // 30s max per individual source
 
@@ -44,6 +45,8 @@ function buildSourcePromises() {
     runSource('FIRMS', firms),
     // News-signal layer (dashboard context only — carries no alert weight)
     runSource('GDELT', gdelt),
+    // Town forecasts for the dashboard weather centre (no alert weight)
+    runSource('Weather', weather),
   ];
 }
 
