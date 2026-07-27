@@ -3,10 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script>
-(function(){try{var t=localStorage.getItem("snsw-monitor-theme");
-if(t==="dark")document.documentElement.classList.add("dark");}catch(e){}})();
-</script>
 <title>SNSW Emergency Monitor</title>
 <link rel="icon" type="image/png" href="/adventist-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -115,9 +111,6 @@ a{color:var(--accent-text)}
 .alert-badge.tier-flash{background:var(--err-tint);color:var(--err-text)}
 .alert-badge.tier-priority{background:var(--warn-tint);color:var(--warn-s)}
 .alert-badge.monitoring{background:var(--ok-tint);color:var(--ok)}
-.theme-btn{width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--surface);color:var(--muted);cursor:pointer;transition:background var(--dur-1) var(--ease),color var(--dur-1) var(--ease)}
-.theme-btn:hover{background:var(--surface-2);color:var(--text)}
-.theme-btn svg{width:15px;height:15px}
 
 /* GRID */
 .grid{display:block;margin-top:var(--s3)}
@@ -567,9 +560,6 @@ function renderTopbar(){
   const ts = new Date(D.meta.timestamp);
   const d = ts.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}).toUpperCase();
   const timeStr = ts.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true});
-  const themeIcon = currentTheme()==='dark'
-    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>'
-    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
   document.getElementById('topbar').innerHTML=`
     <div class="top-left">
       <span class="brand"><img src="/adventist-logo.png" alt="">South NSW Conference <span class="brand-suffix">· Emergency Monitor</span></span>
@@ -579,18 +569,7 @@ function renderTopbar(){
         if(e) return `<span class="alert-badge tier-flash">EMERGENCY WARNING</span>`;
         if(w||f||s) return `<span class="alert-badge tier-priority">${w?'WATCH AND ACT':f?'FLOOD WARNING':'STORM WARNING'}</span>`;
         return `<span class="alert-badge monitoring">MONITORING</span>`;})()}
-      <button class="theme-btn" onclick="toggleTheme()" title="Switch light/dark theme">${themeIcon}</button>
     </div>`;
-}
-
-// === THEME ===
-const THEME_KEY = 'snsw-monitor-theme';
-function currentTheme(){ return document.documentElement.classList.contains('dark') ? 'dark' : 'light'; }
-function toggleTheme(){
-  const next = currentTheme()==='dark' ? 'light' : 'dark';
-  document.documentElement.classList.toggle('dark', next==='dark');
-  try{ localStorage.setItem(THEME_KEY, next); }catch(e){}
-  renderTopbar();
 }
 
 // === LEFT RAIL ===
