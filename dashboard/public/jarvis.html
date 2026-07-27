@@ -354,7 +354,7 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
   <div class="grid">
     <div class="col" id="centerCol">
       <div id="weatherCenter"></div>
-      <button class="section-toggle" id="lowerToggle" onclick="toggleLower()">Hide news &amp; resources <span class="chev">&#9662;</span></button>
+      <button class="section-toggle" id="lowerToggle" onclick="toggleLower()">Hide detail panels <span class="chev">&#9662;</span></button>
       <div class="lower" id="lowerGrid"></div>
     </div>
   </div>
@@ -756,12 +756,16 @@ function renderWeather(){
 
 // === LOWER SECTION TOGGLE ===
 const LOWER_KEY = 'snsw-lower-hidden';
+// Hides everything below the weather centre: news/resources row + both
+// bottom panel strips (signals and hazards).
 function applyLowerVisibility(){
   const hidden = (()=>{ try { return localStorage.getItem(LOWER_KEY)==='1'; } catch(e){ return false; } })();
-  const grid = document.getElementById('lowerGrid');
+  for (const id of ['lowerGrid','rightRail','leftRail']) {
+    const el = document.getElementById(id);
+    if(el) el.style.display = hidden ? 'none' : '';
+  }
   const btn = document.getElementById('lowerToggle');
-  if(grid) grid.style.display = hidden ? 'none' : '';
-  if(btn) btn.innerHTML = (hidden ? 'Show' : 'Hide') + ' news &amp; resources <span class="chev">' + (hidden ? '&#9656;' : '&#9662;') + '</span>';
+  if(btn) btn.innerHTML = (hidden ? 'Show' : 'Hide') + ' detail panels <span class="chev">' + (hidden ? '&#9656;' : '&#9662;') + '</span>';
 }
 function toggleLower(){
   try { localStorage.setItem(LOWER_KEY, localStorage.getItem(LOWER_KEY)==='1' ? '0' : '1'); } catch(e){}
