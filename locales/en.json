@@ -45,7 +45,7 @@
     "intelligenceSynthesis": "INTELLIGENCE SYNTHESIS"
   },
   "panels": {
-    "sensorGrid": "Sensor Grid",
+    "sensorGrid": "Hazard Grid",
     "tradeIdeas": "Leverageable Ideas",
     "osintFeed": "OSINT Feed",
     "osintStream": "OSINT Stream",
