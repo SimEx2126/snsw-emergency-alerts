@@ -116,7 +116,7 @@ a{color:var(--accent-text)}
 
 /* GRID */
 .grid{display:block;margin-top:var(--s3)}
-.bottom-row{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s3);margin-top:var(--s3);align-items:stretch}
+.bottom-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--s3);margin-top:var(--s3);align-items:stretch}
 .bottom-row .g-panel{margin:0}
 .col{display:flex;flex-direction:column;gap:var(--s3)}
 .g-panel{border:1px solid var(--border);border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--shadow-xs);padding:var(--s4);position:relative;overflow:hidden}
@@ -263,14 +263,62 @@ body.low-perf .ticker-wrap::-webkit-scrollbar{width:4px}
 body.low-perf .ticker-wrap::-webkit-scrollbar-track{background:transparent}
 body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:2px}
 
+/* ALERT BANNER */
+.alert-banner{display:flex;align-items:center;gap:var(--s5);padding:var(--s5) var(--s6);border-radius:var(--r-lg);border:1px solid;margin-top:var(--s3)}
+.alert-banner .ab-icon{font-size:32px;line-height:1;flex:none}
+.alert-banner .ab-main{flex:1;min-width:0}
+.alert-banner .ab-head{font-size:26px;font-weight:600;letter-spacing:var(--track-tight);line-height:1.15}
+.alert-banner .ab-sub{margin-top:4px;font-size:var(--fs-md);color:var(--text)}
+.alert-banner .ab-meta{flex:none;text-align:right;font-family:var(--font-mono);font-size:var(--fs-xs);color:var(--muted);line-height:1.7}
+.ab-clear{background:var(--ok-tint);border-color:color-mix(in oklch,var(--ok) 30%,transparent)}
+.ab-clear .ab-head{color:var(--ok)}
+.ab-advice{background:var(--info-tint);border-color:color-mix(in oklch,var(--info) 30%,transparent)}
+.ab-advice .ab-head{color:var(--info)}
+.ab-watch{background:var(--warn-tint);border-color:color-mix(in oklch,var(--warn-s) 35%,transparent)}
+.ab-watch .ab-head{color:var(--warn-s)}
+.ab-emergency{background:var(--err-tint);border-color:color-mix(in oklch,var(--err) 40%,transparent)}
+.ab-emergency .ab-head{color:var(--err-text)}
+
+/* ACTIVE HAZARDS + MAP */
+.hazard-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3);margin-top:var(--s3);align-items:stretch}
+.hazard-row .g-panel{display:flex;flex-direction:column}
+.haz-list{overflow-y:auto;max-height:420px;scrollbar-width:thin}
+.haz-item{display:flex;gap:var(--s3);align-items:flex-start;padding:var(--s3) 0;border-bottom:1px solid var(--divider)}
+.haz-item:last-child{border-bottom:none}
+.haz-chip{flex:none;font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:3px 8px;border-radius:var(--r-full);white-space:nowrap;margin-top:1px}
+.haz-chip.c-emergency{background:var(--err-tint);color:var(--err-text)}
+.haz-chip.c-watch{background:var(--warn-tint);color:var(--warn-s)}
+.haz-chip.c-advice{background:var(--info-tint);color:var(--info)}
+.haz-chip.c-quake{background:var(--surface-sunk);color:var(--muted)}
+.haz-title{font-size:var(--fs-sm);font-weight:600;color:var(--text-strong);line-height:1.35}
+.haz-sub{font-size:var(--fs-xs);color:var(--muted);margin-top:2px}
+.haz-empty{padding:var(--s5) 0;text-align:center;font-size:var(--fs-sm);color:var(--muted)}
+.map-panel{margin:0}
+
+#forecastDetail .wx-grid{grid-template-columns:repeat(4,1fr)}
+@media(max-width:900px){#forecastDetail .wx-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* FIRE-WEATHER STRIP */
+.wx-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:var(--s3);margin-top:var(--s3)}
+.wx-town{border:1px solid var(--border);border-radius:var(--r);background:var(--surface);box-shadow:var(--shadow-xs);padding:var(--s3);cursor:pointer;text-align:left;font-family:inherit;transition:border-color var(--dur-1) var(--ease),background var(--dur-1) var(--ease)}
+.wx-town:hover{border-color:var(--border-strong);background:var(--surface-2)}
+.wx-town.active{border-color:var(--accent);background:var(--accent-tint)}
+.wx-town .n{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:var(--fs-sm);font-weight:600;color:var(--text-strong)}
+.wx-town .n .ic{font-size:19px}
+.wx-town .tmp{font-family:var(--font-mono);font-size:24px;font-weight:600;color:var(--text-strong);margin:6px 0 4px}
+.wx-town .met{font-size:var(--fs-xs);color:var(--muted);line-height:1.6}
+.wx-town .met b{font-weight:600;color:var(--text)}
+.wx-town .met .hot{color:var(--warn-s);font-weight:700}
+.wx-strip-note{margin-top:var(--s2);font-size:var(--fs-xs);color:var(--faint)}
+
 /* HAZARD MAP */
 .wx-bottom{display:grid;grid-template-columns:1fr 1fr;column-gap:var(--s5);row-gap:var(--s3)}
 .wx-bottom>*{min-width:0}
 .t-hl{grid-column:1;grid-row:1}
 .t-map{grid-column:2;grid-row:1}
 .wx-bottom .wx-grid{grid-column:1;grid-row:2;grid-template-rows:repeat(2,1fr)}
-#hazMap{grid-column:2;grid-row:2;min-height:320px;border-radius:var(--r);overflow:hidden;border:1px solid var(--divider);background:var(--surface-2)}
-.wx-bottom .map-key{grid-column:2;grid-row:3;margin-top:0}
+#hazMap{flex:1;min-height:380px;border-radius:var(--r);overflow:hidden;border:1px solid var(--divider);background:var(--surface-2)}
+.map-key{margin-top:var(--s3)}
 #hazMap .leaflet-container{font-family:var(--font-sans)}
 .leaflet-popup-content{font-family:var(--font-sans);font-size:var(--fs-sm);line-height:1.5}
 .leaflet-tooltip.town-tip{background:var(--surface);color:var(--text-strong);border:1px solid var(--border-strong);border-radius:var(--r-sm);box-shadow:var(--shadow-xs);font-family:var(--font-sans);font-size:var(--fs-xs);font-weight:600;padding:2px 7px}
@@ -350,13 +398,17 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
 }
 
 /* RESPONSIVE */
-@media(max-width:1400px){.bottom-row{grid-template-columns:repeat(2,1fr)}.metrics-row{grid-template-columns:repeat(3,1fr)}.src-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:1400px){.metrics-row{grid-template-columns:repeat(3,1fr)}.src-grid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:1100px){
   #main{padding:8px}
   .topbar{padding:var(--s2) var(--s3)}
   .top-left{flex-wrap:wrap}
   .alert-badge{font-size:var(--fs-xs)}
   .bottom-row{grid-template-columns:repeat(2,1fr)}
+  .hazard-row{grid-template-columns:1fr}
+  .wx-strip{grid-template-columns:repeat(3,1fr)}
+  .alert-banner{flex-wrap:wrap;padding:var(--s4)}
+  .alert-banner .ab-meta{text-align:left;width:100%}
   .lower .lp-ticker,.lower .lp-osint,.lower .lp-macro,.lower .lp-ideas{flex:1 1 100%;max-width:none}
   .metrics-row{grid-template-columns:repeat(2,1fr)}
   .src-grid{grid-template-columns:repeat(2,1fr)}
@@ -375,6 +427,9 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
   .section-toggle{margin:var(--s3) 0}
   .lower,.bottom-row{gap:var(--s3)}
   .bottom-row{grid-template-columns:1fr}
+  .wx-strip{grid-template-columns:repeat(2,1fr)}
+  .alert-banner .ab-head{font-size:21px}
+  #hazMap{min-height:300px}
   .brand{font-size:var(--fs-sm)}
   .brand .brand-suffix{display:none}
   .town-btn{height:34px;font-size:var(--fs-sm);padding:0 var(--s4)}
@@ -408,15 +463,23 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
 </div>
 <div id="main">
   <div class="topbar" id="topbar"></div>
-  <div class="grid">
-    <div class="col" id="centerCol">
-      <div id="weatherCenter"></div>
-      <button class="section-toggle" id="lowerToggle" onclick="toggleLower()">Hide detail panels <span class="chev">&#9662;</span></button>
-      <div class="lower" id="lowerGrid"></div>
+  <div id="alertBanner"></div>
+  <div class="hazard-row">
+    <div class="g-panel" id="activeHazards"></div>
+    <div class="g-panel map-panel">
+      <div class="sec-head"><h3>Hazard Map</h3><span class="badge">NSW RFS &middot; GEOSCIENCE AU</span></div>
+      <div id="hazMap"></div>
+      <div class="map-key" id="mapKey"></div>
     </div>
   </div>
-  <div class="bottom-row" id="rightRail"></div>
   <div class="bottom-row" id="leftRail"></div>
+  <div id="weatherStrip"></div>
+  <button class="section-toggle" id="lowerToggle" onclick="toggleLower()">Show forecast, news &amp; signals <span class="chev">&#9662;</span></button>
+  <div id="detailsWrap">
+    <div id="forecastDetail"></div>
+    <div class="lower" id="lowerGrid"></div>
+    <div class="bottom-row" id="rightRail"></div>
+  </div>
 </div>
 <div class="glossary-overlay" id="glossaryOverlay" onclick="if(event.target===this) closeGlossary()">
   <div class="glossary-panel">
@@ -652,10 +715,6 @@ function renderLeftRail(){
 
   document.getElementById('leftRail').innerHTML=`
     <div class="g-panel">
-      <div class="sec-head"><h3>${t('panels.sensorGrid','Hazard Grid')}</h3><span class="badge">${t('badges.live','LIVE')}</span></div>
-      ${layers.map(l=>`<div class="layer-item"><div class="layer-left"><div class="ldot ${l.dot}"></div><div><div class="layer-name">${l.name}</div><div class="layer-sub">${l.sub}</div></div></div><div class="layer-count">${l.count}</div></div>`).join('')}
-    </div>
-    <div class="g-panel">
       <div class="sec-head"><h3>Fire Incidents</h3><span class="badge">NSW RFS</span></div>
       <div class="nuke-ok">${(rfs.emergency||[]).length?'&#9888; EMERGENCY WARNING CURRENT':(rfs.watchAct||[]).length?'&#9888; WATCH AND ACT CURRENT':'&#9679; NO ELEVATED FIRE ALERTS'}</div>
       ${incidentsHtml}
@@ -735,64 +794,140 @@ const WMO = (c) => {
 const compass = d => d==null?'':['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'][Math.round(d/22.5)%16];
 const aqiLabel = a => a==null?['\u2014','']:a<=50?[a,'Good \uD83D\uDC4D']:a<=100?[a,'Moderate']:a<=150?[a,'Sensitive \u26A0\uFE0F']:[a,'Unhealthy \uD83D\uDC4E'];
 
-function setWxTown(i){ wxTownIdx = i; renderWeather(); }
 
-function renderWeather(){
-  const el = document.getElementById('weatherCenter');
-  if(!el) return;
-  // The template replace destroys the Leaflet container — rebuild cleanly
-  if (hazMap) { try { hazMap.remove(); } catch(e){} hazMap = null; hazMarkersLayer = null; }
+function setWxTown(i){ wxTownIdx = i; renderWeatherStrip(); renderForecastDetail(); if (hazMap) { hazMap.setView([D.weather.towns[i].lat, D.weather.towns[i].lon], 9); plotHazMarkers(); } }
+
+// === ALERT BANNER — the page's headline state ===
+function renderAlertBanner(){
+  const el = document.getElementById('alertBanner'); if(!el) return;
+  const rfs = D.rfs || {}, bom = D.bom || {}, q = D.quakes || {};
+  const em = (rfs.emergency||[]).length, wa = (rfs.watchAct||[]).length, adv = (rfs.advice||[]).length;
+  const bs = bom.summary || {};
+  const majorFlood = (bom.warnings||[]).some(w => w.type==='flood' && w.floodClass==='major');
+  const storms = bs.storm||0, floods = bs.flood||0, severe = (bs.severeWeather||0)+(bs.fireWeather||0)+(bs.other||0);
+  const bigQuake = (q.events||[]).some(e => (e.mag||0) >= 4);
+
+  let level, icon, head;
+  if (em || majorFlood) { level='ab-emergency'; icon='\u{1F6A8}'; head = em ? `Emergency Warning · ${em} active` : 'Major Flood Warning'; }
+  else if (wa || storms || floods || bigQuake) { level='ab-watch'; icon='⚠️'; head = wa ? `Watch and Act · ${wa} active` : storms ? 'Severe Thunderstorm Warning' : floods ? 'Flood Warning current' : 'Significant earthquake nearby'; }
+  else if (adv || severe) { level='ab-advice'; icon='ℹ️'; head = adv ? `Advice · ${adv} incident${adv>1?'s':''}` : 'Weather warning current'; }
+  else { level='ab-clear'; icon='✅'; head='No current warnings'; }
+
+  const bits = [];
+  if (em) bits.push(`${em} emergency warning${em>1?'s':''}`);
+  if (wa) bits.push(`${wa} watch and act`);
+  if (adv) bits.push(`${adv} advice`);
+  if (bom.total) bits.push(`${bom.total} BOM warning${bom.total>1?'s':''}`);
+  if (q.total) bits.push(`${q.total} earthquake${q.total>1?'s':''} (7d)`);
+  const sub = bits.length ? bits.join(' · ') : 'No fire incidents, weather warnings or earthquakes in the monitored region.';
+
+  const ts = D.meta?.timestamp ? new Date(D.meta.timestamp) : new Date();
+  el.className = 'alert-banner ' + level;
+  el.innerHTML = `
+    <div class="ab-icon">${icon}</div>
+    <div class="ab-main">
+      <div class="ab-head">${head}</div>
+      <div class="ab-sub">${sub}</div>
+    </div>
+    <div class="ab-meta">
+      SOUTHERN NSW &amp; ACT<br>
+      UPDATED ${ts.toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'})}<br>
+      SOURCES ${D.meta?.sourcesOk||0}/${D.meta?.sourcesQueried||0}
+    </div>`;
+}
+
+// === ACTIVE WARNINGS & INCIDENTS — prioritised, always visible ===
+function renderActiveHazards(){
+  const el = document.getElementById('activeHazards'); if(!el) return;
+  const rfs = D.rfs || {}, bom = D.bom || {}, q = D.quakes || {};
+  const esc = t2 => String(t2 ?? '').replace(/</g,'&lt;');
+  const rank = { 'Emergency Warning':0, 'Watch and Act':1, 'Advice':3 };
+  const items = [];
+
+  (rfs.incidents||[]).filter(i => rank[i.category] !== undefined).forEach(i => items.push({
+    order: rank[i.category],
+    chip: i.category==='Emergency Warning' ? ['c-emergency','Emergency'] : i.category==='Watch and Act' ? ['c-watch','Watch & Act'] : ['c-advice','Advice'],
+    title: i.title,
+    sub: [i.type, i.status, i.council, i.size && i.size!=='0 ha' ? i.size : null].filter(Boolean).join(' · '),
+    link: i.link,
+  }));
+  (bom.warnings||[]).forEach(w => {
+    const major = w.type==='flood' && w.floodClass==='major';
+    items.push({
+      order: major ? 0 : (w.type==='storm' || w.floodClass==='moderate') ? 2 : 3,
+      chip: major ? ['c-emergency','Major Flood'] : ['c-watch', (w.type||'warning').replace('-',' ')],
+      title: w.title.replace(/^\d+\/\d+:\d+\s+\w+\s+/,''),
+      sub: 'Bureau of Meteorology',
+      link: w.link,
+    });
+  });
+  (q.events||[]).filter(e => (e.mag||0) >= 3).forEach(e => items.push({
+    order: (e.mag>=5)?0:(e.mag>=4)?2:4,
+    chip: ['c-quake', `M${e.mag}`],
+    title: `Earthquake — ${e.place || 'unknown location'}`,
+    sub: `Geoscience Australia${e.depth!=null?` · ${e.depth} km deep`:''}`,
+  }));
+
+  items.sort((a,b) => a.order - b.order);
+  const body = items.length
+    ? `<div class="haz-list">${items.map(i => `
+        <div class="haz-item">
+          <span class="haz-chip ${i.chip[0]}">${esc(i.chip[1])}</span>
+          <div>
+            <div class="haz-title">${i.link ? `<a href="${esc(i.link)}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">${esc(i.title)} &#8599;</a>` : esc(i.title)}</div>
+            ${i.sub ? `<div class="haz-sub">${esc(i.sub)}</div>` : ''}
+          </div>
+        </div>`).join('')}</div>`
+    : '<div class="haz-empty">&#9679; No active warnings or incidents in the monitored region</div>';
+
+  el.innerHTML = `<div class="sec-head"><h3>Active Warnings &amp; Incidents</h3><span class="badge">${items.length} CURRENT</span></div>${body}`;
+}
+
+// === FIRE-WEATHER STRIP — one compact row per town ===
+function renderWeatherStrip(){
+  const el = document.getElementById('weatherStrip'); if(!el) return;
   const towns = D.weather?.towns || [];
   if(!towns.length){ el.innerHTML=''; return; }
   if(wxTownIdx >= towns.length) wxTownIdx = 0;
-  const tn = towns[wxTownIdx];
+  const cards = towns.map((tn,i) => {
+    const c = tn.current || {};
+    const [icon] = WMO(c.code);
+    const windHot = (c.windKmh||0) >= 40, dry = (c.humidity!=null && c.humidity < 25);
+    return `<button class="wx-town ${i===wxTownIdx?'active':''}" onclick="setWxTown(${i})" title="Show forecast and centre the map on ${tn.name}">
+      <div class="n">${tn.name}<span class="ic">${icon}</span></div>
+      <div class="tmp">${c.temp!=null?Math.round(c.temp):'—'}°</div>
+      <div class="met">Wind <b class="${windHot?'hot':''}">${c.windKmh!=null?c.windKmh.toFixed(0):'—'} km/h</b> ${compass(c.windDir)}<br>
+        Humidity <b class="${dry?'hot':''}">${c.humidity!=null?c.humidity:'—'}%</b> · Rain <b>${tn.today?.rainChance ?? 0}%</b></div>
+    </button>`;
+  }).join('');
+  el.innerHTML = `<div class="wx-strip">${cards}</div>
+    <div class="wx-strip-note">Fire-weather conditions per town — strong wind or low humidity is highlighted. Select a town to centre the map and see its forecast below.</div>`;
+}
+
+// === FULL FORECAST (collapsible detail) ===
+function renderForecastDetail(){
+  const el = document.getElementById('forecastDetail'); if(!el) return;
+  const towns = D.weather?.towns || [];
+  if(!towns.length){ el.innerHTML=''; return; }
+  const tn = towns[wxTownIdx] || towns[0];
   const c = tn.current || {};
-  const [icon, cond] = WMO(c.code);
-  const now = c.time ? new Date(c.time) : new Date();
-  const dayName = now.toLocaleDateString('en-AU',{weekday:'long'});
-  const timeStr = c.time ? c.time.slice(11,16) : '';
-  const fmtT = v => v==null?'\u2014':Math.round(v);
-  const sunT = v => v ? v.slice(11,16) : '\u2014';
-
-  const townBtns = towns.map((t2,i)=>
-    `<button class="town-btn ${i===wxTownIdx?'active':''}" onclick="setWxTown(${i})">${t2.name}</button>`).join('');
-
-  const week = (tn.days||[]).slice(0,7).map((d,i)=>{
+  const fmtT = v => v==null?'—':Math.round(v);
+  const sunT = v => v ? v.slice(11,16) : '—';
+  const week = (tn.days||[]).slice(0,7).map((d,i) => {
     const [di] = WMO(d.code);
     const dn = i===0 ? 'Today' : new Date(d.date+'T12:00').toLocaleDateString('en-AU',{weekday:'short'});
-    return `<div class="wx-day ${i===0?'today':''}"><div class="d">${dn}</div><div class="i">${di}</div><div class="t">${fmtT(d.max)}\u00B0 <span>${fmtT(d.min)}\u00B0</span></div></div>`;
+    return `<div class="wx-day ${i===0?'today':''}"><div class="d">${dn}</div><div class="i">${di}</div><div class="t">${fmtT(d.max)}° <span>${fmtT(d.min)}°</span></div></div>`;
   }).join('');
-
-  el.innerHTML = `<div class="wx">
-    <div class="wx-towns wx-towns-top">${townBtns}</div>
-    <div class="wx-side">
-      <div class="wx-icon">${icon}</div>
-      <div class="wx-temp">${fmtT(c.temp)}<sup>\u00B0C</sup></div>
-      <div class="wx-when">${dayName}, <span style="color:var(--faint)">${timeStr}</span></div>
-      <div class="wx-cond">
-        <span>${icon} ${cond}</span>
-        <span class="wx-sub">\uD83C\uDF27\uFE0F Rain \u00B7 ${tn.today?.rainChance ?? 0}% today</span>
-      </div>
-      <div class="wx-town-card">${tn.name}, NSW${tn.name==='Canberra'?' / ACT':''} \u00B7 AU</div>
-    </div>
-    <div class="wx-main">
-      <div class="wx-towns">${townBtns}</div>
-      <div class="wx-week">${week}</div>
-      <div class="wx-bottom">
-        <div class="wx-hl-title t-hl">Today's Highlights</div>
-        <div class="wx-hl-title t-map">Hazard Map</div>
-        <div class="wx-grid">
-            <div class="wx-tile"><div class="l">Wind</div><div class="v">${c.windKmh!=null?c.windKmh.toFixed(1):'\u2014'} <small>km/h</small></div><div class="s">${compass(c.windDir)}</div></div>
-            <div class="wx-tile"><div class="l">Sunrise &amp; Sunset</div><div class="v" style="font-size:19px">\u2191 ${sunT(tn.today?.sunrise)}<br>\u2193 ${sunT(tn.today?.sunset)}</div></div>
-            <div class="wx-tile"><div class="l">Humidity</div><div class="v">${c.humidity!=null?c.humidity:'\u2014'}<small>%</small></div><div class="s">${c.humidity>=70?'Humid':c.humidity>=30?'Normal':'Dry'}</div></div>
-            <div class="wx-tile"><div class="l">Visibility</div><div class="v">${c.visibilityKm!=null?c.visibilityKm:'\u2014'} <small>km</small></div><div class="s">${c.visibilityKm>=20?'Clear':c.visibilityKm>=8?'Average':'Poor'}</div></div>
-        </div>
-        <div id="hazMap"></div>
-        <div class="map-key" id="mapKey"></div>
-      </div>
+  el.innerHTML = `<div class="g-panel">
+    <div class="sec-head"><h3>7-Day Forecast — ${tn.name}</h3><span class="badge">OPEN-METEO</span></div>
+    <div class="wx-week">${week}</div>
+    <div class="wx-grid">
+      <div class="wx-tile"><div class="l">Wind</div><div class="v">${c.windKmh!=null?c.windKmh.toFixed(1):'—'} <small>km/h</small></div><div class="s">${compass(c.windDir)}</div></div>
+      <div class="wx-tile"><div class="l">Sunrise &amp; Sunset</div><div class="v" style="font-size:19px">↑ ${sunT(tn.today?.sunrise)}<br>↓ ${sunT(tn.today?.sunset)}</div></div>
+      <div class="wx-tile"><div class="l">Humidity</div><div class="v">${c.humidity!=null?c.humidity:'—'}<small>%</small></div><div class="s">${c.humidity>=70?'Humid':c.humidity>=30?'Normal':'Dry'}</div></div>
+      <div class="wx-tile"><div class="l">Visibility</div><div class="v">${c.visibilityKm!=null?c.visibilityKm:'—'} <small>km</small></div><div class="s">${c.visibilityKm>=20?'Clear':c.visibilityKm>=8?'Average':'Poor'}</div></div>
     </div>
   </div>`;
-  setTimeout(initHazMap, 0);
 }
 
 // === HAZARD MAP (Leaflet / OpenStreetMap) ===
@@ -875,12 +1010,10 @@ const LOWER_KEY = 'snsw-lower-hidden';
 // bottom panel strips (signals and hazards).
 function applyLowerVisibility(){
   const hidden = (()=>{ try { return localStorage.getItem(LOWER_KEY)==='1'; } catch(e){ return false; } })();
-  for (const id of ['lowerGrid','rightRail','leftRail']) {
-    const el = document.getElementById(id);
-    if(el) el.style.display = hidden ? 'none' : '';
-  }
+  const wrap = document.getElementById('detailsWrap');
+  if(wrap) wrap.style.display = hidden ? 'none' : '';
   const btn = document.getElementById('lowerToggle');
-  if(btn) btn.innerHTML = (hidden ? 'Show' : 'Hide') + ' detail panels <span class="chev">' + (hidden ? '&#9656;' : '&#9662;') + '</span>';
+  if(btn) btn.innerHTML = (hidden ? 'Show' : 'Hide') + ' forecast, news &amp; signals <span class="chev">' + (hidden ? '&#9656;' : '&#9662;') + '</span>';
 }
 function toggleLower(){
   try { localStorage.setItem(LOWER_KEY, localStorage.getItem(LOWER_KEY)==='1' ? '0' : '1'); } catch(e){}
@@ -1145,17 +1278,14 @@ function syncResponsiveLayout(force=false){
   const mobileNow = isMobileLayout();
   if(force || lastResponsiveMobile === null || mobileNow !== lastResponsiveMobile){
     lastResponsiveMobile = mobileNow;
-    renderTopbar();
-    renderLeftRail();
-    renderWeather();
-    renderLower();
-    renderRight();
+    renderTopbar();renderAlertBanner();renderActiveHazards();renderLeftRail();renderWeatherStrip();renderForecastDetail();renderLower();renderRight();
   }
 }
 
 // === REINIT (for live updates without boot sequence) ===
 function reinit(){
-  renderTopbar();renderLeftRail();renderWeather();renderLower();renderRight();
+  renderTopbar();renderAlertBanner();renderActiveHazards();renderLeftRail();renderWeatherStrip();renderForecastDetail();renderLower();renderRight();
+  plotHazMarkers();
 }
 
 // === SSE: Live Updates from Server ===
@@ -1193,9 +1323,10 @@ function connectSSE(){
 // === INIT ===
 let booted = false;
 function init(){
-  renderTopbar();renderLeftRail();renderWeather();renderLower();renderRight();
+  renderTopbar();renderAlertBanner();renderActiveHazards();renderLeftRail();renderWeatherStrip();renderForecastDetail();renderLower();renderRight();
   renderGlossary();
   applyLowerVisibility();
+  setTimeout(initHazMap, 60);
   bindMapLifecycleEvents();
   if (!booted) { runBoot(); booted = true; }
   // Open article links from ticker cards
