@@ -292,21 +292,21 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
 .town-btn{border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:var(--font-sans);font-size:var(--fs-base);font-weight:500;height:40px;padding:0 var(--s5);border-radius:var(--r-full);cursor:pointer;transition:background var(--dur-1) var(--ease),border-color var(--dur-1) var(--ease),color var(--dur-1) var(--ease)}
 .town-btn:hover{background:var(--surface-2);border-color:var(--border-strong)}
 .town-btn.active{color:var(--accent-fg);background:var(--accent);border-color:var(--accent)}
-.wx-week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:var(--s5)}
-.wx-day{border:1px solid var(--divider);border-radius:var(--r);background:var(--surface-2);padding:var(--s2);text-align:center}
+.wx-week{display:grid;grid-template-columns:repeat(7,1fr);gap:var(--s2);margin-bottom:var(--s6)}
+.wx-day{border:1px solid var(--divider);border-radius:var(--r-lg);background:var(--surface-2);padding:var(--s3) var(--s2);text-align:center}
 .wx-day.today{border-color:var(--accent);background:var(--accent-tint)}
-.wx-day .d{font-size:var(--fs-xs);font-weight:600;color:var(--muted)}
+.wx-day .d{font-size:var(--fs-sm);font-weight:600;color:var(--muted)}
 .wx-day.today .d{color:var(--accent-text)}
-.wx-day .i{font-size:22px;margin:4px 0}
-.wx-day .t{font-family:var(--font-mono);font-size:var(--fs-xs);color:var(--text-strong)}
+.wx-day .i{font-size:30px;margin:6px 0}
+.wx-day .t{font-family:var(--font-mono);font-size:var(--fs-sm);color:var(--text-strong)}
 .wx-day .t span{color:var(--faint)}
 .wx-hl-title{font-size:var(--fs-cap);font-weight:600;text-transform:uppercase;letter-spacing:var(--track-cap);color:var(--faint);margin-bottom:var(--s3)}
-.wx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:var(--s3)}
-.wx-tile{border:1px solid var(--divider);border-radius:var(--r);background:var(--surface-2);padding:var(--s3)}
-.wx-tile .l{font-size:var(--fs-xs);color:var(--muted);margin-bottom:var(--s2)}
-.wx-tile .v{font-family:var(--font-mono);font-size:22px;font-weight:600;color:var(--text-strong)}
-.wx-tile .v small{font-size:var(--fs-xs);font-weight:500;color:var(--muted)}
-.wx-tile .s{margin-top:var(--s2);font-size:var(--fs-xs);color:var(--muted)}
+.wx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:var(--s4)}
+.wx-tile{border:1px solid var(--divider);border-radius:var(--r-lg);background:var(--surface-2);padding:var(--s4)}
+.wx-tile .l{font-size:var(--fs-sm);color:var(--muted);margin-bottom:var(--s3)}
+.wx-tile .v{font-family:var(--font-mono);font-size:28px;font-weight:600;color:var(--text-strong)}
+.wx-tile .v small{font-size:var(--fs-sm);font-weight:500;color:var(--muted)}
+.wx-tile .s{margin-top:var(--s2);font-size:var(--fs-sm);color:var(--muted)}
 @media(max-width:900px){.wx{flex-direction:column}.wx-side{flex:none;border-right:none;border-bottom:1px solid var(--divider)}.wx-week{grid-template-columns:repeat(4,1fr)}}
 
 /* RESPONSIVE */
@@ -738,7 +738,7 @@ function renderWeather(){
       <div class="wx-grid">
         <div class="wx-tile"><div class="l">UV Index (max)</div><div class="v">${tn.today?.uvMax!=null?tn.today.uvMax.toFixed(1):'\u2014'}</div><div class="s">${tn.today?.uvMax>=8?'Very high':tn.today?.uvMax>=6?'High':tn.today?.uvMax>=3?'Moderate':'Low'}</div></div>
         <div class="wx-tile"><div class="l">Wind</div><div class="v">${c.windKmh!=null?c.windKmh.toFixed(1):'\u2014'} <small>km/h</small></div><div class="s">${compass(c.windDir)}</div></div>
-        <div class="wx-tile"><div class="l">Sunrise &amp; Sunset</div><div class="v" style="font-size:16px">\u2191 ${sunT(tn.today?.sunrise)}<br>\u2193 ${sunT(tn.today?.sunset)}</div></div>
+        <div class="wx-tile"><div class="l">Sunrise &amp; Sunset</div><div class="v" style="font-size:19px">\u2191 ${sunT(tn.today?.sunrise)}<br>\u2193 ${sunT(tn.today?.sunset)}</div></div>
         <div class="wx-tile"><div class="l">Humidity</div><div class="v">${c.humidity!=null?c.humidity:'\u2014'}<small>%</small></div><div class="s">${c.humidity>=70?'Humid':c.humidity>=30?'Normal':'Dry'}</div></div>
         <div class="wx-tile"><div class="l">Visibility</div><div class="v">${c.visibilityKm!=null?c.visibilityKm:'\u2014'} <small>km</small></div><div class="s">${c.visibilityKm>=20?'Clear':c.visibilityKm>=8?'Average':'Poor'}</div></div>
         <div class="wx-tile"><div class="l">Air Quality (US AQI)</div><div class="v">${aqiV}</div><div class="s">${aqiS}</div></div>
