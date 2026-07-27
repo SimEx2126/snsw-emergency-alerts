@@ -5,42 +5,60 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SNSW Emergency Monitor — Initializing</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/adventist-logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+(function(){try{var t=localStorage.getItem("snsw-monitor-theme");
+if(t==="dark")document.documentElement.classList.add("dark");}catch(e){}})();
+</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#020408;--text:#e8f4f0;--dim:#6a8a82;--accent:#64f0c8;
-  --border:rgba(100,240,200,0.12);--mono:'IBM Plex Mono',monospace;
+  --bg:oklch(0.994 0.002 75);--surface:oklch(0.999 0.001 75);
+  --text:oklch(0.215 0.006 75);--dim:oklch(0.505 0.008 75);
+  --accent:#d2500a;--accent-text:oklch(0.545 0.170 40);
+  --border:oklch(0.910 0.006 75);--divider:oklch(0.935 0.006 75);
+  --track:oklch(0.955 0.005 75);
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:'Poppins',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
 }
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--mono);display:flex;align-items:center;justify-content:center}
+:root.dark{
+  --bg:oklch(0.185 0.006 75);--surface:oklch(0.225 0.007 75);
+  --text:oklch(0.930 0.005 75);--dim:oklch(0.680 0.008 75);
+  --accent:#e8703a;--accent-text:oklch(0.755 0.140 48);
+  --border:oklch(0.325 0.007 75);--divider:oklch(0.285 0.007 75);
+  --track:oklch(0.245 0.007 75);
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--sans);display:flex;align-items:center;justify-content:center;-webkit-font-smoothing:antialiased}
 
-.logo-ring{width:120px;height:120px;border:2px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative}
+.logo-ring{width:120px;height:120px;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;background:var(--surface)}
+.logo-ring img{width:64px;height:64px;object-fit:contain}
 .logo-ring::before{content:'';position:absolute;inset:-8px;border:1px solid var(--border);border-radius:50%;border-top-color:var(--accent);animation:spin 2s linear infinite}
-.logo-ring::after{content:'';position:absolute;inset:-16px;border:1px solid rgba(100,240,200,0.06);border-radius:50%;border-bottom-color:rgba(100,240,200,0.15);animation:spin 3s linear infinite reverse}
+
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes pulse-blink{0%,100%{opacity:1}50%{opacity:0.3}}
 @keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
-.logo-text{font-size:18px;font-weight:700;letter-spacing:0.2em;color:var(--accent)}
+.logo-text{font-size:18px;font-weight:700;letter-spacing:0.2em;color:var(--accent-text)}
 .container{display:flex;flex-direction:column;align-items:center;gap:32px}
 
-#bootLines{font-size:12px;color:var(--dim);text-align:left;line-height:2;min-width:340px}
+#bootLines{font-family:var(--mono);font-size:11.5px;color:var(--dim);text-align:left;line-height:2;min-width:340px}
 #bootLines .line{opacity:0;animation:fadein 0.3s ease forwards}
-#bootLines .ok{color:var(--accent)}
+#bootLines .ok{color:var(--accent-text)}
 
-#status{font-size:12px;color:var(--accent);letter-spacing:0.15em;margin-top:4px;min-height:20px;display:flex;align-items:center;gap:8px}
-#status .blink{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:pulse-blink 1.5s ease-in-out infinite;flex-shrink:0}
+#status{font-size:12px;font-weight:600;color:var(--text);letter-spacing:0.12em;margin-top:4px;min-height:20px;display:flex;align-items:center;gap:8px}
+#status .blink{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse-blink 1.5s ease-in-out infinite;flex-shrink:0}
 
-#countdown{margin-top:8px;font-size:11px;color:var(--dim);letter-spacing:0.1em;text-align:center;min-height:16px}
+#countdown{font-family:var(--mono);margin-top:8px;font-size:11px;color:var(--dim);letter-spacing:0.06em;text-align:center;min-height:16px}
 #countdown .eta{color:var(--text)}
-#countdown .bar-wrap{width:340px;height:2px;background:rgba(100,240,200,0.08);margin-top:8px;overflow:hidden}
-#countdown .bar-fill{height:100%;background:var(--accent);width:0%;transition:width 1s linear;box-shadow:0 0 6px var(--accent)}
+#countdown .bar-wrap{width:340px;height:3px;background:var(--track);border-radius:2px;margin-top:8px;overflow:hidden}
+#countdown .bar-fill{height:100%;background:var(--accent);border-radius:2px;width:0%;transition:width 1s linear}
 </style>
 </head>
 <body>
 <div class="container">
   <div class="logo-ring">
-    <span class="logo-text">CX</span>
+    <img src="/adventist-logo.png" alt="South NSW Conference">
   </div>
 
   <div id="bootLines"></div>
@@ -60,12 +78,12 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--m
 const SWEEP_ESTIMATE_S = 50; // estimated sweep duration in seconds
 
 const lines = [
-  'SNSW EMERGENCY MONITOR v1.0.0',
+  'SNSW EMERGENCY MONITOR',
   'INITIATING FIRST SWEEP...',
-  '├── CONNECTING 25 OSINT SOURCES',
-  '├── GDELT · OPENSKY · FIRMS · MARITIME · SAFECAST',
-  '├── FRED · BLS · EIA · TREASURY · GSCPI',
-  '└── TELEGRAM · WHO · OFAC · ACLED · REDDIT · BLUESKY',
+  '├── NSW RFS · MAJOR INCIDENTS',
+  '├── BOM · NSW/ACT WEATHER WARNINGS',
+  '├── GEOSCIENCE AUSTRALIA · EARTHQUAKES',
+  '└── NASA FIRMS · GDELT NEWS LAYER',
   '<span class="ok">AWAITING SWEEP COMPLETION...</span>',
 ];
 
@@ -139,7 +157,7 @@ function goToDashboard() {
   barFill.style.transition = 'width 0.4s ease';
   barFill.style.width = '100%';
   etaText.textContent = '';
-  statusText.textContent = 'TERMINAL READY — LOADING DASHBOARD';
+  statusText.textContent = 'MONITOR READY — LOADING DASHBOARD';
   setTimeout(() => location.replace('/'), 800);
 }
 
