@@ -416,16 +416,15 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
 }
 
 @media(max-width:640px){
-  /* Full-bleed on phones: drop the card chrome so content isn't boxed in */
-  #main{padding:0}
-  .topbar,.wx,.g-panel,.section-toggle{border-left:none;border-right:none;border-radius:0;box-shadow:none}
-  .topbar{margin-bottom:var(--s3)}
-  .grid{margin-top:0}
-  .wx-main{padding:var(--s4) var(--s3)}
-  .wx-side{padding:var(--s5) var(--s3)}
-  .wx-towns-top{padding:var(--s3)}
-  .section-toggle{margin:var(--s3) 0}
-  .lower,.bottom-row{gap:var(--s3)}
+  /* Slim gutter on phones — a thin container, not a boxed-in card stack */
+  #main{padding:6px}
+  .topbar,.g-panel,.section-toggle,.alert-banner{border-radius:var(--r-sm)}
+  .topbar{margin-bottom:var(--s2)}
+  .g-panel{padding:var(--s3)}
+  .alert-banner{padding:var(--s4) var(--s3);margin-top:var(--s2)}
+  .hazard-row,.bottom-row,#weatherStrip,.lower{margin-top:var(--s2);gap:var(--s2)}
+  .wx-strip{gap:var(--s2)}
+  .section-toggle{margin:var(--s2) 0}
   .bottom-row{grid-template-columns:1fr}
   .wx-strip{grid-template-columns:repeat(2,1fr)}
   .alert-banner .ab-head{font-size:21px}
