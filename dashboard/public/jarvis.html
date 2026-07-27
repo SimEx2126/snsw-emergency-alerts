@@ -285,6 +285,7 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
 .wx-town-card{margin-top:auto;padding:var(--s4);border-radius:var(--r-lg);background:var(--accent-tint);color:var(--accent-text);font-weight:600;font-size:var(--fs-md);text-align:center}
 .wx-main{flex:1;padding:var(--s5);min-width:0}
 .wx-towns{display:flex;gap:var(--s2);flex-wrap:wrap;margin-bottom:var(--s5)}
+.wx-towns-top{display:none}
 .town-btn{border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:var(--font-sans);font-size:var(--fs-base);font-weight:500;height:40px;padding:0 var(--s5);border-radius:var(--r-full);cursor:pointer;transition:background var(--dur-1) var(--ease),border-color var(--dur-1) var(--ease),color var(--dur-1) var(--ease)}
 .town-btn:hover{background:var(--surface-2);border-color:var(--border-strong)}
 .town-btn.active{color:var(--accent-fg);background:var(--accent);border-color:var(--accent)}
@@ -305,6 +306,9 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
 .wx-tile .s{margin-top:var(--s2);font-size:var(--fs-sm);color:var(--muted)}
 @media(max-width:900px){
   .wx{flex-direction:column}
+  .wx-towns-top{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s2);margin:0;padding:var(--s4);border-bottom:1px solid var(--divider)}
+  .wx-towns-top .town-btn{width:100%;display:flex;align-items:center;justify-content:center;padding:0 4px;white-space:nowrap;font-size:var(--fs-sm)}
+  .wx-main .wx-towns{display:none}
   .wx-side{flex:none;border-right:none;border-bottom:1px solid var(--divider);padding:var(--s5)}
   .wx-side .wx-icon{font-size:56px;margin:0 0 var(--s3)}
   .wx-temp{font-size:44px}
@@ -732,6 +736,7 @@ function renderWeather(){
   }).join('');
 
   el.innerHTML = `<div class="wx">
+    <div class="wx-towns wx-towns-top">${townBtns}</div>
     <div class="wx-side">
       <div class="wx-icon">${icon}</div>
       <div class="wx-temp">${fmtT(c.temp)}<sup>\u00B0C</sup></div>
