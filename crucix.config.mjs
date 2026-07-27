@@ -7,6 +7,18 @@ export default {
   publicUrl: process.env.PUBLIC_URL || null,
   refreshIntervalMinutes: parseInt(process.env.REFRESH_INTERVAL_MINUTES) || 15,
 
+  // Monitored area: southern NSW + ACT (South NSW Conference territory).
+  // North edge sits below Sydney (Greater Sydney Conference); west reaches the SA border.
+  region: {
+    west: parseFloat(process.env.REGION_WEST) || 141.0,
+    south: parseFloat(process.env.REGION_SOUTH) || -37.6,
+    east: parseFloat(process.env.REGION_EAST) || 151.7,
+    north: parseFloat(process.env.REGION_NORTH) || -34.0,
+    label: process.env.REGION_LABEL || 'Southern NSW & ACT',
+    // Earthquakes just outside the region are still felt inside it
+    quakePaddingDegrees: 1.0,
+  },
+
   llm: {
     provider: process.env.LLM_PROVIDER || null, // anthropic | openai | gemini | codex | openrouter | minimax | mistral | ollama | grok
     apiKey: process.env.LLM_API_KEY || null,

@@ -1,8 +1,12 @@
 // NASA FIRMS — Fire Information for Resource Management System
-// Detects active fires/thermal anomalies globally within 3 hours of satellite pass.
-// Detects military strikes, explosions, wildfires, industrial fires.
+// Detects active fires/thermal anomalies within ~3 hours of satellite pass.
+// Used here as satellite corroboration of bushfire activity over the
+// monitored region. VIIRS misses small/short-lived fires and flags
+// hazard-reduction burns, so NSW RFS remains the authoritative source —
+// alert tiering never escalates on FIRMS alone.
 
 import '../utils/env.mjs';
+import config from '../../crucix.config.mjs';
 
 const FIRMS_BASE = 'https://firms.modaps.eosdis.nasa.gov/api/area/csv';
 
@@ -49,17 +53,18 @@ async function fetchFires(opts = {}) {
   }
 }
 
-// Key conflict/hotspot zones
+// Monitored zone — the whole conference territory in one box
 const HOTSPOTS = {
-  middleEast: { west: 30, south: 12, east: 65, north: 42, label: 'Middle East' },
-  ukraine: { west: 22, south: 44, east: 41, north: 53, label: 'Ukraine' },
-  iran: { west: 44, south: 25, east: 63, north: 40, label: 'Iran' },
-  sudanHorn: { west: 21, south: 2, east: 52, north: 23, label: 'Sudan / Horn of Africa' },
-  myanmar: { west: 92, south: 9, east: 102, north: 29, label: 'Myanmar' },
-  southAsia: { west: 60, south: 5, east: 98, north: 37, label: 'South Asia' },
+  southNSW: {
+    west: config.region.west,
+    south: config.region.south,
+    east: config.region.east,
+    north: config.region.north,
+    label: config.region.label,
+  },
 };
 
-// Analyze fire detections for potential military/strike activity
+// Analyze fire detections for bushfire activity
 function analyzeFires(fires, regionLabel) {
   if (!Array.isArray(fires) || fires.length === 0) {
     return { region: regionLabel, totalDetections: 0, highConfidence: 0, highIntensity: [], summary: 'No detections' };
@@ -68,7 +73,8 @@ function analyzeFires(fires, regionLabel) {
   const highConf = fires.filter(f => f.confidence === 'h' || f.confidence === 'high');
   const nomConf = fires.filter(f => f.confidence === 'n' || f.confidence === 'nominal');
 
-  // High intensity fires (FRP > 10 MW) — potential strikes, industrial fires, large explosions
+  // High intensity fires (FRP > 10 MW) — established fire fronts rather than
+  // smouldering or small burns
   const highIntensity = fires
     .filter(f => parseFloat(f.frp) > 10)
     .map(f => ({
@@ -106,15 +112,16 @@ export async function briefing() {
       source: 'NASA FIRMS',
       timestamp: new Date().toISOString(),
       status: 'no_key',
-      message: 'Set FIRMS_MAP_KEY for satellite fire/strike detection. Free at https://firms.modaps.eosdis.nasa.gov/api/area/',
+      message: 'Set FIRMS_MAP_KEY for satellite fire detection. Free at https://firms.modaps.eosdis.nasa.gov/api/area/',
     };
   }
 
-  // Fetch all hotspots in parallel
+  // Fetch all hotspots in parallel (days: 1 — we sweep frequently and only
+  // care about currently active fires)
   const entries = Object.entries(HOTSPOTS);
   const rawResults = await Promise.all(
     entries.map(async ([key, box]) => {
-      const fires = await fetchFires({ ...box, days: 2 });
+      const fires = await fetchFires({ ...box, days: 1 });
       return { key, label: box.label, fires };
     })
   );
@@ -124,14 +131,14 @@ export async function briefing() {
     return analyzeFires(r.fires, r.label);
   });
 
-  // Generate signals
+  // Generate signals — corroboration only; RFS is the authority on alert level
   const signals = [];
   for (const h of hotspots) {
-    if (h.highIntensity?.length > 5) {
-      signals.push(`HIGH INTENSITY FIRES in ${h.region}: ${h.highIntensity.length} detections >10MW FRP`);
+    if (h.highIntensity?.length > 3) {
+      signals.push(`LARGE ACTIVE FIRE FRONT in ${h.region}: ${h.highIntensity.length} detections >10MW FRP`);
     }
-    if (h.nightDetections > 20) {
-      signals.push(`ELEVATED NIGHT ACTIVITY in ${h.region}: ${h.nightDetections} night detections (potential strikes/combat)`);
+    if (h.nightDetections > 5) {
+      signals.push(`Overnight fire activity in ${h.region}: ${h.nightDetections} night detections (unlikely to be planned burns)`);
     }
   }
 

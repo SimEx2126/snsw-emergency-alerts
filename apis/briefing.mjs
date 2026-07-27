@@ -9,6 +9,9 @@ import { pathToFileURL } from 'node:url';
 // === Australian hazard feeds (authoritative) ===
 // NSW RFS incidents, BOM warnings and GA earthquakes are registered in Step 3
 // of the SNSW adaptation; FIRMS provides satellite corroboration, GDELT a news layer.
+import { briefing as rfs } from './sources/rfs.mjs';
+import { briefing as bom } from './sources/bom.mjs';
+import { briefing as gaQuakes } from './sources/ga-quakes.mjs';
 import { briefing as firms } from './sources/firms.mjs';
 import { briefing as gdelt } from './sources/gdelt.mjs';
 
@@ -33,7 +36,11 @@ export async function runSource(name, fn, ...args) {
 
 function buildSourcePromises() {
   return [
-    // Satellite fire detection over the configured region
+    // Authoritative hazard feeds — these drive alerting
+    runSource('RFS', rfs),
+    runSource('BOM', bom),
+    runSource('Quakes', gaQuakes),
+    // Satellite fire detection over the configured region (corroboration)
     runSource('FIRMS', firms),
     // News-signal layer (dashboard context only — carries no alert weight)
     runSource('GDELT', gdelt),

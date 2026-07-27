@@ -1,7 +1,7 @@
 // Shared fetch utility with timeout, retries, and error handling
 
 export async function safeFetch(url, opts = {}) {
-  const { timeout = 15000, retries = 1, headers = {} } = opts;
+  const { timeout = 15000, retries = 1, headers = {}, parse = 'json' } = opts;
   let lastError;
   for (let i = 0; i <= retries; i++) {
     try {
@@ -17,6 +17,7 @@ export async function safeFetch(url, opts = {}) {
         throw new Error(`HTTP ${res.status}: ${body.slice(0, 200)}`);
       }
       const text = await res.text();
+      if (parse === 'text') return text;
       try { return JSON.parse(text); } catch { return { rawText: text.slice(0, 500) }; }
     } catch (e) {
       lastError = e;

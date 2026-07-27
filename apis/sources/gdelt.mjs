@@ -89,11 +89,12 @@ function compactArticle(a) {
 // GDELT rate limit: 1 request per 5 seconds
 function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-// Briefing mode — get top global events summary (sequential due to rate limit)
+// Briefing mode — Australian hazard news layer (dashboard context only;
+// carries no alert weight — RFS/BOM are the authorities)
 export async function briefing() {
-  // Single broad query to stay within rate limits
+  // Single query to stay within rate limits; sourcecountry:AS = Australia
   const all = await searchEvents(
-    'conflict OR military OR economy OR crisis OR war OR sanctions OR tariff OR strike OR outbreak',
+    '(bushfire OR flood OR "severe storm" OR evacuation OR earthquake OR "emergency warning") sourcecountry:AS',
     { maxRecords: 50, timespan: '24h' }
   );
 
@@ -104,30 +105,16 @@ export async function briefing() {
     keywords.some(k => a.title?.toLowerCase().includes(k))
   );
 
-  // Geo events — get mapped event locations (separate API, respects rate limit)
-  await delay(5500);
-  let geoPoints = [];
-  try {
-    const geo = await geoEvents('conflict OR military OR protest OR crisis', { maxPoints: 30, timespan: '24h' });
-    geoPoints = (geo?.features || []).filter(f => f.geometry?.coordinates).map(f => ({
-      lat: f.geometry.coordinates[1],
-      lon: f.geometry.coordinates[0],
-      name: f.properties?.name || f.properties?.html || '',
-      count: f.properties?.count || 1,
-      type: f.properties?.type || 'event',
-    }));
-  } catch (e) { /* geo endpoint optional — don't break briefing */ }
-
   return {
     source: 'GDELT',
     timestamp: new Date().toISOString(),
     totalArticles: articles.length,
     allArticles: articles,
-    geoPoints,
-    conflicts: categorize(['military', 'conflict', 'war', 'strike', 'missile', 'attack', 'bomb', 'troops']),
-    economy: categorize(['economy', 'recession', 'inflation', 'market', 'sanctions', 'tariff', 'trade', 'gdp']),
-    health: categorize(['pandemic', 'outbreak', 'epidemic', 'disease', 'virus', 'health']),
-    crisis: categorize(['crisis', 'disaster', 'emergency', 'refugee', 'famine']),
+    geoPoints: [],
+    fires: categorize(['bushfire', 'fire', 'blaze', 'burn']),
+    floods: categorize(['flood', 'inundat', 'levee', 'river ris']),
+    storms: categorize(['storm', 'wind', 'hail', 'cyclone', 'tornado']),
+    crisis: categorize(['evacuat', 'emergency', 'disaster', 'earthquake', 'rescue']),
   };
 }
 
