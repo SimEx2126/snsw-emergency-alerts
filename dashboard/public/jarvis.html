@@ -309,10 +309,12 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
   .wx-towns-top{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s2);margin:0;padding:var(--s4);border-bottom:1px solid var(--divider)}
   .wx-towns-top .town-btn{width:100%;display:flex;align-items:center;justify-content:center;padding:0 4px;white-space:nowrap;font-size:var(--fs-sm)}
   .wx-main .wx-towns{display:none}
-  .wx-side{flex:none;border-right:none;border-bottom:1px solid var(--divider);padding:var(--s5)}
-  .wx-side .wx-icon{font-size:56px;margin:0 0 var(--s3)}
-  .wx-temp{font-size:44px}
-  .wx-town-card{margin-top:var(--s4)}
+  .wx-side{display:grid;grid-template-columns:auto 1fr;column-gap:var(--s7);align-items:center;flex:none;border-right:none;border-bottom:1px solid var(--divider);padding:var(--s5)}
+  .wx-side .wx-icon{grid-column:1;grid-row:1;font-size:56px;margin:0 0 var(--s2)}
+  .wx-temp{grid-column:1;grid-row:2;font-size:44px}
+  .wx-when{grid-column:1;grid-row:3;margin-top:var(--s1)}
+  .wx-cond{grid-column:2;grid-row:1 / 4;align-self:center;justify-self:start;margin-top:0;padding-top:0;border-top:none}
+  .wx-town-card{grid-column:1 / 3;grid-row:4;margin-top:var(--s4)}
   .wx-main{padding:var(--s4)}
   .wx-week{grid-template-columns:repeat(4,1fr)}
 }
