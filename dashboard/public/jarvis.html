@@ -129,7 +129,7 @@ a{color:var(--accent-text)}
 .theme-btn svg{width:15px;height:15px}
 
 /* GRID */
-.grid{display:grid;grid-template-columns:1fr 340px;gap:var(--s3);margin-top:var(--s3)}
+.grid{display:block;margin-top:var(--s3)}
 .bottom-row{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s3);margin-top:var(--s3);align-items:stretch}
 .bottom-row .g-panel{margin:0}
 .col{display:flex;flex-direction:column;gap:var(--s3)}
@@ -310,7 +310,7 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
 @media(max-width:900px){.wx{flex-direction:column}.wx-side{flex:none;border-right:none;border-bottom:1px solid var(--divider)}.wx-week{grid-template-columns:repeat(4,1fr)}}
 
 /* RESPONSIVE */
-@media(max-width:1400px){.grid{grid-template-columns:1fr 320px}.bottom-row{grid-template-columns:repeat(2,1fr)}.metrics-row{grid-template-columns:repeat(3,1fr)}.src-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:1400px){.bottom-row{grid-template-columns:repeat(2,1fr)}.metrics-row{grid-template-columns:repeat(3,1fr)}.src-grid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:1100px){
   #main{padding:8px}
   .topbar{padding:var(--s2) var(--s3)}
@@ -318,9 +318,6 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
   .top-center{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
   .top-right{gap:6px;flex-wrap:wrap;justify-content:center}
   .meta-pill,.alert-badge,.guide-btn{font-size:10px}
-  .grid{display:flex;flex-direction:column}
-  #centerCol{order:1}
-  #rightRail{order:2}
   .bottom-row{grid-template-columns:1fr}
   .lower .lp-ticker,.lower .lp-osint,.lower .lp-macro,.lower .lp-ideas{flex:1 1 100%;max-width:none}
   .metrics-row{grid-template-columns:repeat(2,1fr)}
@@ -354,8 +351,8 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
       <div id="weatherCenter"></div>
       <div class="lower" id="lowerGrid"></div>
     </div>
-    <div class="col" id="rightRail"></div>
   </div>
+  <div class="bottom-row" id="rightRail"></div>
   <div class="bottom-row" id="leftRail"></div>
 </div>
 <div class="glossary-overlay" id="glossaryOverlay" onclick="if(event.target===this) closeGlossary()">
