@@ -7,6 +7,8 @@
 <link rel="icon" type="image/png" href="/adventist-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 
 <style>
@@ -261,6 +263,16 @@ body.low-perf .ticker-wrap::-webkit-scrollbar{width:4px}
 body.low-perf .ticker-wrap::-webkit-scrollbar-track{background:transparent}
 body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:2px}
 
+/* HAZARD MAP */
+.map-panel{margin-top:var(--s3)}
+#hazMap{height:440px;border-radius:var(--r);overflow:hidden;border:1px solid var(--divider);background:var(--surface-2)}
+#hazMap .leaflet-container{font-family:var(--font-sans)}
+.leaflet-popup-content{font-family:var(--font-sans);font-size:var(--fs-sm);line-height:1.5}
+.map-key{display:flex;gap:14px;flex-wrap:wrap;margin-top:var(--s3);font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:0.04em;text-transform:uppercase}
+.map-key .k{display:flex;align-items:center;gap:5px}
+.map-key .kd{width:9px;height:9px;border-radius:50%}
+@media(max-width:900px){#hazMap{height:320px}}
+
 /* SECTION TOGGLE */
 .section-toggle{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin-top:var(--s3);height:32px;border:1px solid var(--border);border-radius:var(--r);background:var(--surface);color:var(--muted);font-family:var(--font-sans);font-size:var(--fs-xs);font-weight:500;cursor:pointer;transition:background var(--dur-1) var(--ease),color var(--dur-1) var(--ease),border-color var(--dur-1) var(--ease)}
 .section-toggle:hover{background:var(--surface-2);color:var(--text);border-color:var(--border-strong)}
@@ -368,6 +380,11 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
       <button class="section-toggle" id="lowerToggle" onclick="toggleLower()">Hide detail panels <span class="chev">&#9662;</span></button>
       <div class="lower" id="lowerGrid"></div>
     </div>
+  </div>
+  <div class="g-panel map-panel" id="mapPanel">
+    <div class="sec-head"><h3>Hazard Map</h3><span class="badge">NSW RFS &middot; GEOSCIENCE AU</span></div>
+    <div id="hazMap"></div>
+    <div class="map-key" id="mapKey"></div>
   </div>
   <div class="bottom-row" id="rightRail"></div>
   <div class="bottom-row" id="leftRail"></div>
@@ -745,16 +762,80 @@ function renderWeather(){
   </div>`;
 }
 
+// === HAZARD MAP (Leaflet / OpenStreetMap) ===
+let hazMap = null, hazMarkersLayer = null;
+// Monitored region bbox (mirrors config.region defaults)
+const HAZ_REGION = { west: 141.0, south: -37.6, east: 151.7, north: -34.0 };
+
+function initHazMap(){
+  // NOTE: `L` is shadowed by the locale object in this scope — Leaflet lives
+  // on window.L (aliased as LF here).
+  const LF = window.L;
+  if (hazMap || !LF || typeof LF.map !== 'function') return;
+  const el = document.getElementById('hazMap');
+  if (!el || el.offsetParent === null) return; // hidden — init when shown
+  hazMap = LF.map('hazMap', { scrollWheelZoom: false }).setView([-35.6, 147.8], 7);
+  LF.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 14,
+  }).addTo(hazMap);
+  LF.rectangle([[HAZ_REGION.south, HAZ_REGION.west], [HAZ_REGION.north, HAZ_REGION.east]],
+    { color: '#d2500a', weight: 1.2, dashArray: '5 5', fill: false, interactive: false }).addTo(hazMap);
+  hazMarkersLayer = LF.layerGroup().addTo(hazMap);
+  plotHazMarkers();
+  renderMapKey();
+}
+
+function plotHazMarkers(){
+  const LF = window.L;
+  if (!hazMap || !hazMarkersLayer || !LF) return;
+  hazMarkersLayer.clearLayers();
+  const C = themeC();
+  const esc = (t) => String(t ?? '').replace(/</g,'&lt;');
+  (D.rfs?.incidents || []).forEach(i => {
+    if (i.lat == null || i.lon == null) return;
+    const em = i.category === 'Emergency Warning', wa = i.category === 'Watch and Act';
+    const color = em ? C.emergency : wa ? C.watchAct : i.category === 'Planned Burn' ? C.burn : C.advice;
+    LF.circleMarker([i.lat, i.lon], { radius: em ? 11 : wa ? 9 : 6, color, fillColor: color, fillOpacity: 0.5, weight: 1.5 })
+      .bindPopup(`<b>${esc(i.title)}</b><br>${esc(i.category)}${i.status ? ' &middot; ' + esc(i.status) : ''}<br>${esc(i.council || '')}${i.size && i.size !== '0 ha' ? ' &middot; ' + esc(i.size) : ''}`)
+      .addTo(hazMarkersLayer);
+  });
+  (D.quakes?.events || []).forEach(e => {
+    if (e.lat == null || e.lon == null) return;
+    LF.circleMarker([e.lat, e.lon], { radius: Math.max(6, (e.mag || 1) * 2.5), color: C.quake, fillColor: C.quake, fillOpacity: 0.45, weight: 1.5 })
+      .bindPopup(`<b>M${e.mag} earthquake</b><br>${esc(e.place || '')}`)
+      .addTo(hazMarkersLayer);
+  });
+  (D.thermal || []).forEach(t => (t.fires || []).forEach(f => {
+    if (f.lat == null || f.lon == null) return;
+    LF.circleMarker([f.lat, f.lon], { radius: 5, color: C.thermal, fillColor: C.thermal, fillOpacity: 0.45, weight: 1 })
+      .bindPopup(`<b>Satellite fire detection</b><br>FRP ${f.frp || '?'} MW`)
+      .addTo(hazMarkersLayer);
+  }));
+}
+
+function renderMapKey(){
+  const el = document.getElementById('mapKey');
+  if (!el) return;
+  const C = themeC();
+  el.innerHTML = [
+    [C.emergency,'Emergency Warning'],[C.watchAct,'Watch and Act'],[C.advice,'Advice'],
+    [C.burn,'Planned Burn'],[C.thermal,'Satellite Fire Det.'],[C.quake,'Earthquake'],
+    ['#d2500a','Monitored Region'],
+  ].map(([c,l])=>`<span class="k"><span class="kd" style="background:${c}"></span>${l}</span>`).join('');
+}
+
 // === LOWER SECTION TOGGLE ===
 const LOWER_KEY = 'snsw-lower-hidden';
 // Hides everything below the weather centre: news/resources row + both
 // bottom panel strips (signals and hazards).
 function applyLowerVisibility(){
   const hidden = (()=>{ try { return localStorage.getItem(LOWER_KEY)==='1'; } catch(e){ return false; } })();
-  for (const id of ['lowerGrid','rightRail','leftRail']) {
+  for (const id of ['lowerGrid','mapPanel','rightRail','leftRail']) {
     const el = document.getElementById(id);
     if(el) el.style.display = hidden ? 'none' : '';
   }
+  if(!hidden) setTimeout(() => { initHazMap(); if(hazMap) hazMap.invalidateSize(); }, 60);
   const btn = document.getElementById('lowerToggle');
   if(btn) btn.innerHTML = (hidden ? 'Show' : 'Hide') + ' detail panels <span class="chev">' + (hidden ? '&#9656;' : '&#9662;') + '</span>';
 }
@@ -1031,7 +1112,7 @@ function syncResponsiveLayout(force=false){
 
 // === REINIT (for live updates without boot sequence) ===
 function reinit(){
-  renderTopbar();renderLeftRail();renderWeather();renderLower();renderRight();
+  renderTopbar();renderLeftRail();renderWeather();renderLower();renderRight();plotHazMarkers();
 }
 
 // === SSE: Live Updates from Server ===
@@ -1072,6 +1153,7 @@ function init(){
   renderTopbar();renderLeftRail();renderWeather();renderLower();renderRight();
   renderGlossary();
   applyLowerVisibility();
+  setTimeout(initHazMap, 100);
   bindMapLifecycleEvents();
   if (!booted) { runBoot(); booted = true; }
   // Open article links from ticker cards
