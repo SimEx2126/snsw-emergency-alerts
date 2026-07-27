@@ -36,7 +36,7 @@ const startTime = Date.now();
 const sseClients = new Set();
 
 // === Delta/Memory ===
-const memory = new MemoryManager(RUNS_DIR);
+const memory = new MemoryManager(RUNS_DIR, { thresholds: config.delta?.thresholds });
 
 // === LLM + Telegram + Discord ===
 const llmProvider = createLLMProvider(config.llm);

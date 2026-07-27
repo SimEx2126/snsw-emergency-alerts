@@ -40,18 +40,23 @@ export default {
     webhookUrl: process.env.DISCORD_WEBHOOK_URL || null, // Fallback: webhook-only alerts (no bot needed)
   },
 
-  // Delta engine thresholds — override defaults from lib/delta/engine.mjs
-  // Set to null to use built-in defaults
+  // Delta engine thresholds — override defaults from lib/delta/engine.mjs.
+  // These are the live tuning surface for alert sensitivity.
   delta: {
     thresholds: {
-      numeric: {
-        // Example overrides (uncomment to customize):
-        // vix: 3,       // more sensitive to VIX moves
-        // wti: 5,       // less sensitive to oil moves
-      },
+      numeric: {},
       count: {
-        // urgent_posts: 3,     // need ±3 urgent posts to flag
-        // thermal_total: 1000, // need ±1000 thermal detections
+        // Defaults shown; uncomment to change sensitivity:
+        // rfs_emergency: 1,   // Emergency Warning count change
+        // rfs_watch_act: 1,
+        // rfs_total: 1,       // any incident appearing/resolving in region
+        // bom_flood: 1,
+        // bom_storm: 1,
+        // bom_other: 1,       // severe/fire weather, tsunami
+        // quake_events: 1,
+        // thermal_total: 10,  // satellite fire detections in region
+        // news_count: 5,
+        // sources_ok: 2,      // raise to ignore more source flapping
       },
     },
   },

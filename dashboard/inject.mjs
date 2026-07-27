@@ -80,6 +80,21 @@ const geoKeywords = {
   'Fed':[38.9,-77],'Congress':[38.9,-77],'Senate':[38.9,-77],
   'Silicon Valley':[37.4,-122],'NASA':[28.6,-80.6],'Pentagon':[38.9,-77],
   'IMF':[38.9,-77],'World Bank':[38.9,-77],'UN':[40.7,-74],
+  // Southern NSW + ACT (monitored region — listed first-match priority is
+  // handled by geoTagText iterating in insertion order, so specific towns
+  // here would lose to country names above; keep these distinctive)
+  'Canberra':[-35.28,149.13],'Queanbeyan':[-35.35,149.23],
+  'Wollongong':[-34.42,150.89],'Nowra':[-34.87,150.60],'Ulladulla':[-35.36,150.47],
+  'Batemans Bay':[-35.71,150.18],'Moruya':[-35.91,150.08],'Narooma':[-36.22,150.13],
+  'Bega':[-36.67,149.84],'Merimbula':[-36.89,149.90],'Eden':[-37.06,149.90],
+  'Goulburn':[-34.75,149.72],'Yass':[-34.84,148.91],'Cooma':[-36.23,149.13],
+  'Jindabyne':[-36.42,148.62],'Thredbo':[-36.50,148.30],'Tumut':[-35.30,148.22],
+  'Wagga Wagga':[-35.11,147.37],'Wagga':[-35.11,147.37],'Albury':[-36.08,146.92],
+  'Griffith':[-34.29,146.04],'Leeton':[-34.55,146.40],'Narrandera':[-34.75,146.55],
+  'Deniliquin':[-35.53,144.95],'Hay':[-34.51,144.84],'Wentworth':[-34.11,141.91],
+  'Young':[-34.31,148.30],'Cootamundra':[-34.64,148.03],'Gundagai':[-35.07,148.10],
+  'Snowy Mountains':[-36.4,148.4],'Riverina':[-34.9,146.5],'Monaro':[-36.3,149.2],
+  'Illawarra':[-34.5,150.8],'South Coast':[-35.8,150.1],
 };
 
 function geoTagText(text) {
@@ -169,40 +184,19 @@ async function fetchRSS(url, source) {
 
 const RSS_SOURCE_FALLBACKS = {
   'SBS Australia': { lat: -35.2809, lon: 149.13, region: 'Australia' },
-  'Indian Express': { lat: 28.6139, lon: 77.209, region: 'India' },
-  'The Hindu': { lat: 13.0827, lon: 80.2707, region: 'India' },
-  'MercoPress': { lat: -34.9011, lon: -56.1645, region: 'South America' }
+  'ABC News': { lat: -35.2809, lon: 149.13, region: 'Australia' },
+  'Guardian AU': { lat: -33.87, lon: 151.21, region: 'Australia' },
 };
-const REGIONAL_NEWS_SOURCES = ['MercoPress', 'Indian Express', 'The Hindu', 'SBS Australia'];
+const REGIONAL_NEWS_SOURCES = ['ABC News', 'SBS Australia', 'Guardian AU'];
 
 export async function fetchAllNews() {
   const feeds = [
-    // Global
-    ['http://feeds.bbci.co.uk/news/world/rss.xml', 'BBC'],
-    ['https://rss.nytimes.com/services/xml/rss/nyt/World.xml', 'NYT'],
-    ['https://www.aljazeera.com/xml/rss/all.xml', 'Al Jazeera'],
-    // USA
-    ['https://feeds.npr.org/1001/rss.xml', 'NPR'],
-    ['https://feeds.bbci.co.uk/news/technology/rss.xml', 'BBC Tech'],
-    ['http://feeds.bbci.co.uk/news/science_and_environment/rss.xml', 'BBC Science'],
-    ['https://rss.nytimes.com/services/xml/rss/nyt/Americas.xml', 'NYT Americas'],
-    // Europe
-    ['https://rss.dw.com/rdf/rss-en-all', 'DW'],
-    ['https://www.france24.com/en/rss', 'France 24'],
-    ['https://www.euronews.com/rss?format=mrss', 'Euronews'],
-    // Africa & Cameroon region
-    ['https://rss.dw.com/rdf/rss-en-africa', 'DW Africa'],
-    ['https://www.rfi.fr/en/rss', 'RFI'],
-    ['https://www.africanews.com/feed/rss', 'Africa News'],
-    ['https://rss.nytimes.com/services/xml/rss/nyt/Africa.xml', 'NYT Africa'],
-    // Asia-Pacific
-    ['https://rss.nytimes.com/services/xml/rss/nyt/AsiaPacific.xml', 'NYT Asia'],
+    // Australia — primary
+    ['https://www.abc.net.au/news/feed/51120/rss.xml', 'ABC News'],
     ['https://www.sbs.com.au/news/topic/australia/feed', 'SBS Australia'],
-    // India
-    ['https://indianexpress.com/section/india/feed/', 'Indian Express'],
-    ['https://www.thehindu.com/news/national/feeder/default.rss', 'The Hindu'],
-    // South America
-    ['https://en.mercopress.com/rss/latin-america', 'MercoPress'],
+    ['https://www.theguardian.com/australia-news/rss', 'Guardian AU'],
+    // World context
+    ['http://feeds.bbci.co.uk/news/world/rss.xml', 'BBC'],
   ];
 
   const results = await Promise.allSettled(
@@ -464,6 +458,45 @@ export async function synthesize(data) {
     }))
   };
 
+  // === Australian hazard feeds (drive alerting) ===
+  const rfsData = data.sources.RFS || {};
+  const rfs = {
+    total: rfsData.total || 0,
+    statewideTotal: rfsData.statewideTotal || 0,
+    emergency: rfsData.emergency || [],
+    watchAct: rfsData.watchAct || [],
+    advice: rfsData.advice || [],
+    incidents: (rfsData.incidents || []).map(i => ({
+      guid: i.guid, title: i.title, category: i.category, type: i.type,
+      status: i.status, council: i.council, size: i.size, link: i.link,
+      lat: i.lat, lon: i.lon, updated: i.updated,
+    })),
+    signals: rfsData.signals || [],
+  };
+
+  const bomData = data.sources.BOM || {};
+  const bom = {
+    total: bomData.total || 0,
+    statewideTotal: bomData.statewideTotal || 0,
+    summary: bomData.summary || { flood: 0, storm: 0, severeWeather: 0, fireWeather: 0, other: 0 },
+    warnings: (bomData.warnings || []).map(w => ({
+      id: w.id, title: w.title, type: w.type, floodClass: w.floodClass,
+      link: w.link, published: w.published, inRegion: w.inRegion,
+    })),
+    signals: bomData.signals || [],
+  };
+
+  const quakesData = data.sources.Quakes || {};
+  const quakes = {
+    total: quakesData.total || 0,
+    maxMag: quakesData.maxMag ?? null,
+    events: (quakesData.events || []).map(e => ({
+      id: e.id, mag: e.mag, place: e.place, time: e.time,
+      depth: e.depth, felt: e.felt, lat: e.lat, lon: e.lon,
+    })),
+    signals: quakesData.signals || [],
+  };
+
   // EPA RadNet — pass through geo-tagged readings
   const epaData = data.sources.EPA || {};
   const epaStations = [];
@@ -529,9 +562,9 @@ export async function synthesize(data) {
   const gdeltData = data.sources.GDELT || {};
   const gdelt = {
     totalArticles: gdeltData.totalArticles || 0,
-    conflicts: (gdeltData.conflicts || []).length,
-    economy: (gdeltData.economy || []).length,
-    health: (gdeltData.health || []).length,
+    fires: (gdeltData.fires || []).length,
+    floods: (gdeltData.floods || []).length,
+    storms: (gdeltData.storms || []).length,
     crisis: (gdeltData.crisis || []).length,
     topTitles: (gdeltData.allArticles || []).slice(0, 5).map(a => a.title?.substring(0, 80)),
     geoPoints: (gdeltData.geoPoints || []).slice(0, 20).map(p => ({
@@ -608,6 +641,7 @@ export async function synthesize(data) {
     },
     sdr: { total: sdrNet.totalReceivers || 0, online: sdrNet.online || 0, zones: sdrZones },
     tg: { posts: tgData.totalPosts || 0, urgent: tgUrgent, topPosts: tgTop },
+    rfs, bom, quakes,
     who, fred, energy, metals, bls, treasury, gscpi, defense, noaa, epa, acled, gdelt, space, health, news,
     markets, // Live Yahoo Finance market data
     ideas: [], ideasSource: 'disabled',
