@@ -5,7 +5,9 @@ import "./apis/utils/env.mjs"; // Load .env first
 export default {
   port: parseInt(process.env.PORT) || 3117,
   publicUrl: process.env.PUBLIC_URL || null,
-  refreshIntervalMinutes: parseInt(process.env.REFRESH_INTERVAL_MINUTES) || 15,
+  // 5 minutes: RFS and BOM both expect polling at this rate, and it caps
+  // worst-case alert latency at one sweep rather than a quarter of an hour.
+  refreshIntervalMinutes: parseInt(process.env.REFRESH_INTERVAL_MINUTES) || 5,
 
   // Monitored area: southern NSW + ACT (South NSW Conference territory).
   // North edge sits below Sydney (Greater Sydney Conference); west reaches the SA border.

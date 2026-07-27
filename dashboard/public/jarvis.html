@@ -821,6 +821,12 @@ function renderAlertBanner(){
   const sub = bits.length ? bits.join(' · ') : 'No fire incidents, weather warnings or earthquakes in the monitored region.';
 
   const ts = D.meta?.timestamp ? new Date(D.meta.timestamp) : new Date();
+  const ageMin = Math.floor((Date.now() - ts.getTime()) / 60000);
+  const ageTxt = ageMin < 1 ? 'JUST NOW' : ageMin === 1 ? '1 MIN AGO' : `${ageMin} MIN AGO`;
+  // Surface stale data loudly — a dead server must not look like a calm region
+  const ageStyle = ageMin >= 30 ? 'color:var(--err-text);font-weight:700'
+                 : ageMin >= 12 ? 'color:var(--warn-s);font-weight:700' : '';
+  const staleNote = ageMin >= 30 ? '<br><span style="color:var(--err-text);font-weight:700">&#9888; FEED MAY BE DOWN</span>' : '';
   el.className = 'alert-banner ' + level;
   el.innerHTML = `
     <div class="ab-icon">${icon}</div>
@@ -830,8 +836,8 @@ function renderAlertBanner(){
     </div>
     <div class="ab-meta">
       SOUTHERN NSW &amp; ACT<br>
-      UPDATED ${ts.toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'})}<br>
-      SOURCES ${D.meta?.sourcesOk||0}/${D.meta?.sourcesQueried||0}
+      UPDATED ${ts.toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'})} <span style="${ageStyle}">&middot; ${ageTxt}</span><br>
+      SOURCES ${D.meta?.sourcesOk||0}/${D.meta?.sourcesQueried||0}${staleNote}
     </div>`;
 }
 
@@ -1287,6 +1293,32 @@ function reinit(){
   plotHazMarkers();
 }
 
+// === CATCH-UP: re-sync when the tab wakes, refocuses or reconnects ===
+// A backgrounded tab can miss an SSE push and then sit on stale data until
+// the next sweep; these hooks pull the latest sweep immediately.
+let catchUpBusy = false;
+async function catchUpData(){
+  if (location.protocol === 'file:' || catchUpBusy) return;
+  catchUpBusy = true;
+  try {
+    const r = await fetch('/api/data');
+    if (r.ok) {
+      const data = await r.json();
+      if (data?.meta?.timestamp && (!D?.meta?.timestamp || new Date(data.meta.timestamp) > new Date(D.meta.timestamp))) {
+        D = data;
+        reinit();
+      }
+    }
+  } catch (e) { /* offline — the next tick or SSE push will resync */ }
+  finally { catchUpBusy = false; }
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden) catchUpData(); });
+window.addEventListener('focus', catchUpData);
+window.addEventListener('online', catchUpData);
+// Keep the "x min ago" age honest between sweeps, and self-heal if SSE dies
+setInterval(() => { renderAlertBanner(); }, 60 * 1000);
+setInterval(catchUpData, 5 * 60 * 1000);
+
 // === SSE: Live Updates from Server ===
 function connectSSE(){
   if (typeof EventSource === 'undefined') return;
@@ -1294,6 +1326,7 @@ function connectSSE(){
   if (location.protocol === 'file:') return;
 
   const es = new EventSource('/events');
+  es.onopen = () => catchUpData();
   es.onmessage = (e) => {
     try {
       const msg = JSON.parse(e.data);
@@ -1342,23 +1375,31 @@ function init(){
   syncResponsiveLayout(true);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   const hasInlineData = !!(D && D.meta);
   const canProbeApi = location.protocol !== 'file:';
 
-  if (canProbeApi && !hasInlineData) {
-    // Server mode: always fetch live data from API (ignore any stale inline D)
-    fetch('/api/data')
-      .then(r => r.json())
-      .then(data => { D = data; init(); connectSSE(); })
-      .catch(() => {
-        // Should not reach here — server routes to loading.html when no data
-        if (D && D.meta) { init(); connectSSE(); }
-      });
-  } else if (hasInlineData) {
-    // File mode: use inline data
-    init();
-  }
+  // file:// — the baked snapshot is all we have
+  if (!canProbeApi) { if (hasInlineData) init(); return; }
+
+  // Paint the baked snapshot immediately so the page isn't blank...
+  if (hasInlineData) init();
+
+  // ...but ALWAYS replace it with live server data. The inline `D` literal is
+  // a build-time snapshot written by `npm run inject`; an operator must never
+  // end up reading it as if it were current. (This previously short-circuited
+  // the fetch AND connectSSE whenever a snapshot was baked in, leaving the
+  // dashboard frozen on hours-old data.)
+  try {
+    const r = await fetch('/api/data');
+    if (r.ok) {
+      const data = await r.json();
+      if (data?.meta) { D = data; hasInlineData ? reinit() : init(); }
+    }
+  } catch (e) { /* offline — SSE and the catch-up timer will resync */ }
+
+  if (!(D && D.meta)) { setTimeout(() => location.reload(), 5000); return; }
+  connectSSE();
 });
 </script>
 </body>
