@@ -6,16 +6,37 @@
 // Usage:
 //   npm run test:alert            # send FLASH + PRIORITY + ROUTINE test emails
 //   npm run test:alert -- flash   # send a single tier
+//   npm run test:alert -- --dry   # no SMTP: write preview HTML files instead
 //
-// Requires SMTP_* / ALERT_EMAIL_* configured in .env.
+// Requires SMTP_* / ALERT_EMAIL_* configured in .env (except --dry).
 
+import { writeFileSync, mkdirSync } from 'fs';
+import { tmpdir } from 'os';
+import { join } from 'path';
 import config from '../crucix.config.mjs';
 import { EmailAlerter } from '../lib/alerts/email.mjs';
 
+const DRY = process.argv.includes('--dry');
+
 const emailAlerter = new EmailAlerter({
   ...(config.email || {}),
+  ...(DRY ? { host: 'dry-run', from: 'monitor@example.org', to: 'preview@example.org' } : {}),
   dashboardUrl: config.publicUrl || `http://localhost:${config.port}`,
 });
+
+let previewDir = null;
+if (DRY) {
+  previewDir = join(tmpdir(), 'snsw-alert-previews');
+  mkdirSync(previewDir, { recursive: true });
+  emailAlerter.transport = {
+    sendMail: async (msg) => {
+      const tier = msg.subject.match(/\[(\w+)\]/)?.[1]?.toLowerCase() || 'alert';
+      const html = msg.html.replace('cid:sda-logo', '../adventist-logo-preview.png').replace('cid:sda-logo', '');
+      writeFileSync(join(previewDir, `${tier}.html`), html);
+      console.log(`\n  preview written: ${join(previewDir, `${tier}.html`)}`);
+    },
+  };
+}
 
 if (!emailAlerter.isConfigured) {
   console.error('Email alerter is not configured.');
@@ -84,7 +105,7 @@ const SCENARIOS = {
   },
 };
 
-const requested = (process.argv[2] || '').toLowerCase();
+const requested = (process.argv.slice(2).find(a => !a.startsWith('--')) || '').toLowerCase();
 const toRun = requested ? [requested] : ['flash', 'priority', 'routine'];
 
 for (const name of toRun) {
