@@ -339,7 +339,11 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
   .wx-cond{grid-column:2;grid-row:1 / 4;align-self:center;justify-self:start;margin-top:0;padding-top:0;border-top:none;font-size:var(--fs-lg)}
   .wx-town-card{grid-column:1 / 3;grid-row:4;margin-top:var(--s5);padding:var(--s4);font-size:var(--fs-lg)}
   .wx-main{padding:var(--s4)}
-  .wx-week{grid-template-columns:repeat(4,1fr)}
+  .wx-week{grid-template-columns:repeat(7,1fr);gap:6px}
+  .wx-day{padding:var(--s2) 2px;min-width:0}
+  .wx-day .d{font-size:var(--fs-xs)}
+  .wx-day .i{font-size:24px;margin:4px 0}
+  .wx-day .t{font-size:var(--fs-xs);white-space:nowrap}
 }
 
 /* RESPONSIVE */
@@ -362,9 +366,12 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
   .brand .brand-suffix{display:none}
   .town-btn{height:34px;font-size:var(--fs-sm);padding:0 var(--s4)}
   .wx-towns{gap:6px}
-  .wx-week{grid-template-columns:repeat(4,1fr);gap:6px}
-  .wx-day .i{font-size:24px}
-  .wx-day{padding:var(--s2)}
+  .wx-week{grid-template-columns:repeat(7,1fr);gap:4px}
+  .wx-day{padding:6px 1px}
+  .wx-day .d{font-size:10px;letter-spacing:-0.01em}
+  .wx-day .i{font-size:19px;margin:3px 0}
+  .wx-day .t{font-size:10px;line-height:1.35}
+  .wx-day .t span{display:block}
   .wx-grid{grid-template-columns:repeat(2,1fr);gap:var(--s2)}
   .wx-tile{padding:var(--s3)}
   .wx-tile .v{font-size:22px}
