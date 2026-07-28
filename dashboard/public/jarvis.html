@@ -295,6 +295,7 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
 .haz-empty{padding:var(--s5) 0;text-align:center;font-size:var(--fs-sm);color:var(--muted)}
 .map-panel{margin:0}
 
+#forecastDetail{margin-top:var(--s3)}
 #forecastDetail .wx-grid{grid-template-columns:repeat(4,1fr)}
 @media(max-width:900px){#forecastDetail .wx-grid{grid-template-columns:repeat(2,1fr)}}
 
@@ -422,7 +423,7 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
   .topbar{margin-bottom:var(--s2)}
   .g-panel{padding:var(--s3)}
   .alert-banner{padding:var(--s4) var(--s3);margin-top:var(--s2)}
-  .hazard-row,.bottom-row,#weatherStrip,.lower{margin-top:var(--s2);gap:var(--s2)}
+  .hazard-row,.bottom-row,#weatherStrip,#forecastDetail,.lower{margin-top:var(--s2);gap:var(--s2)}
   .wx-strip{gap:var(--s2)}
   .section-toggle{margin:var(--s2) 0}
   .bottom-row{grid-template-columns:1fr}
@@ -473,9 +474,9 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
   </div>
   <div class="bottom-row" id="leftRail"></div>
   <div id="weatherStrip"></div>
-  <button class="section-toggle" id="lowerToggle" onclick="toggleLower()">Show forecast, news &amp; signals <span class="chev">&#9662;</span></button>
+  <div id="forecastDetail"></div>
+  <button class="section-toggle" id="lowerToggle" onclick="toggleLower()">Show news &amp; signals <span class="chev">&#9662;</span></button>
   <div id="detailsWrap">
-    <div id="forecastDetail"></div>
     <div class="lower" id="lowerGrid"></div>
     <div class="bottom-row" id="rightRail"></div>
   </div>
@@ -1018,7 +1019,7 @@ function applyLowerVisibility(){
   const wrap = document.getElementById('detailsWrap');
   if(wrap) wrap.style.display = hidden ? 'none' : '';
   const btn = document.getElementById('lowerToggle');
-  if(btn) btn.innerHTML = (hidden ? 'Show' : 'Hide') + ' forecast, news &amp; signals <span class="chev">' + (hidden ? '&#9656;' : '&#9662;') + '</span>';
+  if(btn) btn.innerHTML = (hidden ? 'Show' : 'Hide') + ' news &amp; signals <span class="chev">' + (hidden ? '&#9656;' : '&#9662;') + '</span>';
 }
 function toggleLower(){
   try { localStorage.setItem(LOWER_KEY, localStorage.getItem(LOWER_KEY)==='1' ? '0' : '1'); } catch(e){}
