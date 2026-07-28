@@ -404,14 +404,21 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
 @media(max-width:1400px){.metrics-row{grid-template-columns:repeat(3,1fr)}.src-grid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:1100px){
   #main{padding:8px;display:flex;flex-direction:column}
+  .top-row{display:contents}
   .topbar{order:0}
-  .top-row{order:1}
+  #alertBanner{order:1}
   #weatherStrip{order:2}
-  #forecastDetail{order:3}
-  #leftRail{order:4}
-  #lowerToggle{order:5}
-  #detailsWrap{order:6}
-  .site-foot{order:7}
+  .map-panel{order:3}
+  #activeHazards{order:4}
+  #forecastDetail{order:5}
+  #leftRail{order:6}
+  #lowerToggle{order:7}
+  #detailsWrap{order:8}
+  .site-foot{order:9}
+  /* the grid supplied the gaps; with display:contents they need their own */
+  .top-row .alert-banner{margin-top:var(--s2);height:auto}
+  .g-panel.map-panel{margin-top:var(--s2)}
+  #activeHazards{margin-top:var(--s2)}
   .topbar{padding:6px var(--s3);gap:6px}
   .top-left{flex-wrap:wrap;gap:8px}
   .brand{font-size:var(--fs-sm);gap:7px}
