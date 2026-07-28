@@ -285,7 +285,7 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
 .haz-list{overflow-y:auto;max-height:420px;scrollbar-width:thin}
 .haz-item{display:flex;gap:var(--s3);align-items:flex-start;padding:var(--s3) 0;border-bottom:1px solid var(--divider)}
 .haz-item:last-child{border-bottom:none}
-.haz-chip{flex:none;font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:3px 8px;border-radius:var(--r-full);white-space:nowrap;margin-top:1px}
+.haz-chip{flex:none;width:110px;text-align:center;font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:3px 6px;border-radius:var(--r-full);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
 .haz-chip.c-emergency{background:var(--err-tint);color:var(--err-text)}
 .haz-chip.c-watch{background:var(--warn-tint);color:var(--warn-s)}
 .haz-chip.c-advice{background:var(--info-tint);color:var(--info)}
@@ -428,6 +428,7 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
   .section-toggle{margin:var(--s2) 0}
   .bottom-row{grid-template-columns:1fr}
   .wx-strip{grid-template-columns:repeat(2,1fr)}
+  .haz-chip{width:84px;font-size:8px;letter-spacing:0.04em}
   .alert-banner .ab-head{font-size:21px}
   #hazMap{min-height:300px}
   .brand{font-size:var(--fs-sm)}
