@@ -292,8 +292,11 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
 .top-row .map-panel{grid-column:2;grid-row:1 / 3}
 .top-row .g-panel{display:flex;flex-direction:column}
 .top-row .alert-banner{margin-top:0;height:100%}
+/* No panel padding — the rows carry their own, so the dividers run edge to edge */
+#activeHazards{padding:0}
+#activeHazards .sec-head{padding:var(--s4) var(--s4) var(--s2);margin-bottom:0}
 .haz-list{overflow-y:auto;max-height:420px;scrollbar-width:thin}
-.haz-item{display:flex;gap:var(--s3);align-items:flex-start;padding:var(--s3) 0;border-bottom:1px solid var(--divider)}
+.haz-item{display:flex;gap:var(--s3);align-items:flex-start;padding:var(--s3) var(--s4);border-bottom:1px solid var(--divider)}
 .haz-item:last-child{border-bottom:none}
 .haz-chip{flex:none;width:110px;text-align:center;font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:3px 6px;border-radius:var(--r-full);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
 .haz-chip.c-emergency{background:var(--err-tint);color:var(--err-text)}
@@ -302,7 +305,7 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
 .haz-chip.c-quake{background:var(--surface-sunk);color:var(--muted)}
 .haz-title{font-size:var(--fs-sm);font-weight:600;color:var(--text-strong);line-height:1.35}
 .haz-sub{font-size:var(--fs-xs);color:var(--muted);margin-top:2px}
-.haz-empty{padding:var(--s5) 0;text-align:center;font-size:var(--fs-sm);color:var(--muted)}
+.haz-empty{padding:var(--s5) var(--s4);text-align:center;font-size:var(--fs-sm);color:var(--muted)}
 .g-panel.map-panel{margin:0;padding:0}
 .map-panel #hazMap{border:none;border-radius:var(--r-lg) var(--r-lg) 0 0}
 .map-panel .sec-head{padding:var(--s4) var(--s4) var(--s2);margin-bottom:0}
@@ -451,6 +454,7 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
   .topbar,.g-panel,.section-toggle,.alert-banner{border-radius:var(--r-sm)}
   .topbar{margin-bottom:var(--s2)}
   .g-panel{padding:var(--s3)}
+  .haz-item,.haz-empty{padding-left:var(--s3);padding-right:var(--s3)}
   .alert-banner{padding:var(--s3);margin:0;gap:var(--s2)}
   .top-row,.bottom-row,#forecastDetail,.lower{margin-top:var(--s2);gap:var(--s2)}
   #weatherStrip{gap:var(--s2)}
