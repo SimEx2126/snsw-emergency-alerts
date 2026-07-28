@@ -263,6 +263,12 @@ body.low-perf .ticker-wrap::-webkit-scrollbar{width:4px}
 body.low-perf .ticker-wrap::-webkit-scrollbar-track{background:transparent}
 body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:2px}
 
+/* FOOTER */
+.site-foot{margin:var(--s5) 0 var(--s6);padding-top:var(--s4);border-top:1px solid var(--divider);text-align:center;font-size:var(--fs-xs);line-height:1.7;color:var(--faint)}
+.site-foot b{color:var(--muted);font-weight:600}
+.site-foot a{color:var(--accent-text);text-decoration:none}
+.site-foot a:hover{text-decoration:underline}
+
 /* ALERT BANNER */
 .alert-banner{display:flex;align-items:center;gap:var(--s5);padding:var(--s5) var(--s6);border-radius:var(--r-lg);border:1px solid;margin-top:var(--s3)}
 .alert-banner .ab-icon{font-size:32px;line-height:1;flex:none}
@@ -481,6 +487,11 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
     <div class="lower" id="lowerGrid"></div>
     <div class="bottom-row" id="rightRail"></div>
   </div>
+  <footer class="site-foot">
+    Seventh-day Adventist Church, South NSW Conference &middot; aggregates public feeds from the NSW RFS, Bureau of Meteorology and Geoscience Australia for awareness only.
+    <b>In an emergency call 000</b> and follow official instructions.
+    <a href="https://github.com/SimEx2126/snsw-emergency-alerts" target="_blank" rel="noopener">Source code</a> (AGPL-3.0).
+  </footer>
 </div>
 <div class="glossary-overlay" id="glossaryOverlay" onclick="if(event.target===this) closeGlossary()">
   <div class="glossary-panel">

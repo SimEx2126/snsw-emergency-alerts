@@ -13,7 +13,8 @@
     "test:alert": "node scripts/test-alert.mjs",
     "diag": "node diag.mjs",
     "clean": "node scripts/clean.mjs",
-    "fresh-start": "npm run clean && npm start"
+    "fresh-start": "npm run clean && npm start",
+    "test": "node --test test/hazard.test.mjs"
   },
   "keywords": [
     "emergency-alerts",

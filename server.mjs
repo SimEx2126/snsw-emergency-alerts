@@ -328,6 +328,74 @@ function broadcast(data) {
 }
 
 // === Sweep Cycle ===
+// ─── Source health: a monitor that cannot see must say so ────────────────
+// A source can fail two ways: it throws/times out (lands in raw.errors), or it
+// returns a payload with status:'error' (our AU sources degrade that way).
+const SOURCE_DOWN_AFTER_SWEEPS = 3;
+const sourceFailStreak = new Map();
+
+function failingSourceNames(raw) {
+  const failing = new Set((raw.errors || []).map(e => e.name).filter(Boolean));
+  for (const [name, payload] of Object.entries(raw.sources || {})) {
+    if (payload && payload.status === 'error') failing.add(name);
+  }
+  return failing;
+}
+
+// Only sources that feed alerting matter here — GDELT/Weather are context.
+const ALERTING_SOURCES = new Set(['RFS', 'BOM', 'Quakes']);
+
+function trackSourceHealth(raw) {
+  const failing = failingSourceNames(raw);
+  const newlyDown = [];
+  for (const name of ALERTING_SOURCES) {
+    const streak = failing.has(name) ? (sourceFailStreak.get(name) || 0) + 1 : 0;
+    sourceFailStreak.set(name, streak);
+    if (streak >= SOURCE_DOWN_AFTER_SWEEPS) newlyDown.push({ name, streak });
+  }
+  return newlyDown;
+}
+
+function outageSignals(down) {
+  return down.map(({ name, streak }) => ({
+    key: `source_down:${name}`,
+    sourceOutage: true,
+    sourceName: name,
+    severity: 'high',
+    reason: `${name} unreachable for ${streak} consecutive sweeps`,
+  }));
+}
+
+// ─── First run with no baseline ──────────────────────────────────────────
+// computeDelta returns null when there is no previous run, so a fresh deploy
+// (or a wiped runs/ directory) would silently absorb whatever is already
+// burning. Summarise anything at Watch and Act or above so it still reaches
+// people. Quiet conditions stay quiet.
+function buildStartupDelta(d) {
+  const sig = [];
+  const push = (severity, reason, item) => sig.push({
+    key: `startup:${reason}`.slice(0, 120), severity, reason: `Active at startup — ${reason}`, item, text: reason,
+  });
+  for (const i of (d.rfs?.emergency || [])) push('critical', `Emergency Warning: ${i.title}${i.council ? ` (${i.council})` : ''}`, i);
+  for (const i of (d.rfs?.watchAct || [])) push('high', `Watch and Act: ${i.title}${i.council ? ` (${i.council})` : ''}`, i);
+  for (const w of (d.bom?.warnings || [])) {
+    const major = w.type === 'flood' && w.floodClass === 'major';
+    if (major || w.type === 'storm' || w.floodClass === 'moderate') {
+      push(major ? 'critical' : 'high', w.title, w);
+    }
+  }
+  for (const e of (d.quakes?.events || [])) {
+    if ((e.mag || 0) >= 4) push(e.mag >= 5 ? 'critical' : 'high', `M${e.mag} earthquake — ${e.place || 'unknown location'}`, e);
+  }
+  if (!sig.length) return null;
+  return {
+    timestamp: d.meta?.timestamp || new Date().toISOString(),
+    previous: null,
+    signals: { new: sig, escalated: [], deescalated: [], unchanged: [] },
+    summary: { totalChanges: sig.length, criticalChanges: sig.filter(s => s.severity === 'critical').length, direction: 'risk-off' },
+  };
+}
+
 async function runSweepCycle() {
   if (sweepInProgress) {
     console.log('[Crucix] Sweep already in progress, skipping');
@@ -354,7 +422,24 @@ async function runSweepCycle() {
     const synthesized = await synthesize(rawData);
 
     // 4. Delta computation + memory
-    const delta = memory.addRun(synthesized);
+    let delta = memory.addRun(synthesized);
+
+    // No baseline (fresh deploy / wiped history): report what is already active
+    if (!delta) {
+      delta = buildStartupDelta(synthesized);
+      if (delta) console.log('[Crucix] No previous run — reporting current active hazards');
+    }
+
+    // A source that has been dark for several sweeps is itself alert-worthy
+    const down = trackSourceHealth(rawData);
+    if (down.length) {
+      console.warn('[Crucix] Sources unreachable:', down.map(d => `${d.name} x${d.streak}`).join(', '));
+      const sigs = outageSignals(down);
+      delta = delta || { timestamp: synthesized.meta?.timestamp, signals: { new: [], escalated: [], deescalated: [], unchanged: [] }, summary: { totalChanges: 0, criticalChanges: 0, direction: 'mixed' } };
+      delta.signals.new.push(...sigs);
+      delta.summary.totalChanges += sigs.length;
+    }
+
     synthesized.delta = delta;
 
     // 5. LLM-powered trade ideas (LLM-only feature) — isolated so failures don't kill sweep
