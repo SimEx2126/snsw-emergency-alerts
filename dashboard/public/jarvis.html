@@ -397,7 +397,15 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
 /* RESPONSIVE */
 @media(max-width:1400px){.metrics-row{grid-template-columns:repeat(3,1fr)}.src-grid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:1100px){
-  #main{padding:8px}
+  #main{padding:8px;display:flex;flex-direction:column}
+  .topbar{order:0}
+  .top-row{order:1}
+  #weatherStrip{order:2}
+  #forecastDetail{order:3}
+  #leftRail{order:4}
+  #lowerToggle{order:5}
+  #detailsWrap{order:6}
+  .site-foot{order:7}
   .topbar{padding:var(--s2) var(--s3)}
   .top-left{flex-wrap:wrap}
   .alert-badge{font-size:var(--fs-xs)}
@@ -426,7 +434,13 @@ body.low-perf .ticker-wrap::-webkit-scrollbar-thumb{background:var(--border-stro
   .wx-strip{gap:var(--s2)}
   .section-toggle{margin:var(--s2) 0}
   .bottom-row{grid-template-columns:1fr}
-  .wx-strip{grid-template-columns:repeat(2,1fr)}
+  .wx-strip{grid-template-columns:repeat(3,1fr);gap:6px}
+  .wx-town{padding:var(--s2) 6px}
+  .wx-town .n{font-size:var(--fs-xs);gap:2px;line-height:1.25}
+  .wx-town .n .ic{font-size:14px}
+  .wx-town .tmp{font-size:19px;margin:3px 0 2px}
+  .wx-town .met{font-size:9.5px;line-height:1.45}
+  .wx-strip-note{display:none}
   .haz-chip{width:84px;font-size:8px;letter-spacing:0.04em}
   .alert-banner .ab-head{font-size:21px}
   #hazMap{min-height:280px}
